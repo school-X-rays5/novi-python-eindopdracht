@@ -1,13 +1,13 @@
 class Company:
-    def __init__(self, code, name, street, house_number, postal_code, city, x_worth, y_worth, max_emissions, emissions, fine, check, check_freq, contact_person):
+    def __init__(self, code, name, street, house_number, postal_code, city, x, y, max_emissions, emissions, fine, check, check_freq, contact_person):
         self.__code = int(code)
         self.__name = name.strip()
         self.__street = street.strip()
         self.__house_number = house_number.strip()
         self.__postal_code = postal_code.strip()
         self.__city = city.strip()
-        self.__x_worth = int(x_worth)
-        self.__y_worth = int(y_worth)
+        self.__x = int(x)
+        self.__y = int(y)
         self.__max_emissions = max_emissions.strip()
         self.__emissions = emissions.strip()
         self.__fine = fine.strip()
@@ -33,11 +33,11 @@ class Company:
     def get_city(self):
         return self.__city
 
-    def get_x_worth(self):
-        return self.__x_worth
+    def get_x(self):
+        return self.__x
 
-    def get_y_worth(self):
-        return self.__y_worth
+    def get_y(self):
+        return self.__y
 
     def get_max_emissions(self):
         return self.__max_emissions

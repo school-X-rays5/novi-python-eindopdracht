@@ -12,6 +12,10 @@ class Inspector:
 
     def get_place(self):
         return self.__place
+    
+    def print_data(self):
+         print(self.__code, self.__name, self.__place)
+
 
 def parse_inspectors(file_path):
     file = open(file_path, 'r')
