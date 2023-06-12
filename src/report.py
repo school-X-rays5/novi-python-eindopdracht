@@ -1,5 +1,9 @@
+from datetime import datetime
+
+
 class Report:
-    def __init__(self, inspector_code: int, company_code: int, visit_date: str, report_date: str, status: str, comment: str):
+    def __init__(self, inspector_code: int, company_code: int, visit_date: str, report_date: str, status: str,
+                 comment: str):
         self.__inspector_code = inspector_code
         self.__company_code = company_code
         self.__visit_date = visit_date
@@ -26,10 +30,13 @@ class Report:
         return self.__comment
 
     def print_data(self) -> None:
+        visit_date = datetime.strptime(self.__visit_date.strip(), "%Y%m%d")
+        report_date = datetime.strptime(self.__report_date.strip(), "%Y%m%d") if self.__report_date.strip() else None
+
         print(f"Inspector Code: {self.__inspector_code}", end=", ")
         print(f"Company Code: {self.__company_code}", end=", ")
-        print(f"Visit Date: {self.__visit_date.strip()}", end=", ")
-        print(f"Report Date: {self.__report_date.strip()}", end=", ")
+        print(f"Visit Date: {visit_date}", end=", ")
+        print(f"Report Date: {report_date}", end=", ")
         print(f"Status: {self.__status.strip()}", end=", ")
         print(f"Comment: {self.__comment.strip()}")
 

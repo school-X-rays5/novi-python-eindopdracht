@@ -1,7 +1,9 @@
 import os
-import globals as G
+from datetime import datetime
 from typing import Union
+
 import company as company_struct
+import globals as G
 import inspector as inspector_struct
 import report as report_struct
 
@@ -37,48 +39,96 @@ def print_data(data: Union[list[company_struct], list[inspector_struct], list[re
         i.print_data()
     pause_terminal()
 
+
+def get_date_range_input() -> None | tuple[datetime, datetime] | tuple[None, None] | tuple[
+    datetime | None, datetime | None]:
+    begin_date = input("Enter begin date (yyyy-mm-dd) (leave blank to skip): ")
+    end_date = ""
+    if begin_date:
+        end_date = input("Enter end date (yyyy-mm-dd): ")
+        if not end_date:
+            print("End date is required when begin date is provided.")
+            return get_date_range_input()
+    else:
+        return None, None
+
+    begin: None | datetime = None
+    end: None | datetime = None
+    try:
+        if begin_date:
+            begin = datetime.strptime(begin_date, "%Y-%m-%d")
+            end = datetime.strptime(end_date, "%Y-%m-%d")
+    except ValueError:
+        print("Invalid date")
+        pause_terminal()
+
+        return None
+
+    return begin, end
+
+
 def print_reports_per_inspector():
-    inspector_reports = dict[int, list[report_struct]]
-    inspector_reports = {}
+    clear_terminal()
+    try:
+        inspector_code = int(input("Enter inspector code: "))
+    except ValueError:
+        print("Input not a number")
+        print_reports_per_inspector()
+        return
+
+    begin, end = None, None
+    while True:
+        result = get_date_range_input()
+        if not (result is None):
+            begin, end = result
+            break
 
     for report in G.reports:
-        inspector_code = report.get_inspector_code()
-        if inspector_code not in inspector_reports:
-            inspector_reports[inspector_code] = []
+        if report.get_inspector_code() == inspector_code:
+            visit_date = datetime.strptime(report.get_visit_date(), "%Y%m%d")
+            if begin is not None and end is not None:
+                if not (begin <= visit_date <= end):
+                    continue
 
-        inspector_reports[inspector_code].append(report)
-
-    for k,v in inspector_reports.items():
-        print("Reports for inspector with code", k, "\n")
-        for report in v:
             report.print_data()
-        print("\nEnd of reports for inspector with code", k, "\n\n")
+
     pause_terminal()
 
 
 def print_reports_per_company():
-    company_reports = dict[int, list[report_struct]]
-    company_reports = {}
+    clear_terminal()
+    try:
+        company_code = int(input("Enter company code: "))
+    except ValueError:
+        print("Input not a number")
+        print_reports_per_company()
+        return
+
+    begin, end = None, None
+    while True:
+        result = get_date_range_input()
+        if not (result is None):
+            begin, end = result
+            break
 
     for report in G.reports:
-        company_code = report.get_company_code()
-        if company_code not in company_reports:
-            company_reports[company_code] = []
+        if report.get_company_code() == company_code:
+            visit_date = datetime.strptime(report.get_visit_date(), "%Y%m%d")
+            if begin is not None and end is not None:
+                if not (begin <= visit_date <= end):
+                    continue
 
-        company_reports[company_code].append(report)
-
-    for k,v in company_reports.items():
-        print("Reports for company with code", k, "\n")
-        for report in v:
             report.print_data()
-        print("\nEnd of reports for company with code", k, "\n\n")
+
     pause_terminal()
+
 
 display_report_filtered_options = {
     1: print_reports_per_inspector,
     2: print_reports_per_company,
     3: lambda: []
 }
+
 
 def display_report_filtered():
     clear_terminal()
@@ -89,8 +139,6 @@ def display_report_filtered():
     if not choose_option(display_report_filtered_options):
         display_report_filtered()
         return
-
-
 
 
 data_display_options = {1: lambda: [print_data(G.inspectors)],
@@ -112,6 +160,7 @@ def display_data():
 
 
 main_options = {1: display_data}
+
 
 def main():
     print("1. Display data"
