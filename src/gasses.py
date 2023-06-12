@@ -55,7 +55,8 @@ def LoadGasses(file_path) -> np.ndarray:
     except FileNotFoundError:
         raise FileNotFoundError(f"File not found: {file_path}")
 
-def GetHighUnknownConcentration(gasses_arr) -> GasConcentration:
+
+def get_high_unknown_gas_concentration(gasses_arr) -> GasConcentration:
     company_areas = []
     for company in globals.companies:
         company_areas.append(coordinate.GetAreaAroundCoordinate(company.get_x(), company.get_y(), 5))
@@ -78,8 +79,8 @@ def GetHighUnknownConcentration(gasses_arr) -> GasConcentration:
         if is_inside_area:
             continue
 
-        co2 = row[2]
-        if co2 > highest.get_co2():
+        emissions = calculate_weighted_emmissions(row[2], row[3], row[4], row[5])
+        if emissions > highest.get_weighted_emmissions():
             highest = GasConcentration(row[0], row[1], row[2], row[3], row[4], row[5])
 
     return highest

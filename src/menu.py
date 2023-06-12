@@ -217,9 +217,16 @@ def plot_measurement_data():
         plot_measurement_data()
         return
 
+
+def print_high_unknown_gas_concentration():
+    gasses.get_high_unknown_gas_concentration(G.loaded_measurement).print_data()
+    pause_terminal()
+
+
 measurement_options = {
     1: load_measurement_file,
     2: plot_measurement_data,
+    3: print_high_unknown_gas_concentration,
     4: lambda: []
 }
 
@@ -230,6 +237,7 @@ def measurement_file():
 
     print("1. Load other measurement file"
           "\n2. Plot data"
+          "\n3. Find high unknown gas concentration"
           "\n4. Main menu")
 
     if not choose_option(measurement_options):
