@@ -3,10 +3,10 @@ import inspector
 import report
 
 COMPANIES_PATH = "input/companies.txt"
-companies = []
+companies = list[company.Company]
 
 INSPECTORS_PATH = "input/inspectors.txt"
-inspectors = []
+inspectors = list[inspector.Inspector]
 
 REPORTS_PATH = "input/reports.txt"
-reports = []
+reports = list[report.Report]

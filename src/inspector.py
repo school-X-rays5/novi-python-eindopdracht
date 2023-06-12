@@ -1,23 +1,23 @@
 class Inspector:
-    def __init__(self, code, name, place):
+    def __init__(self, code: int, name: str, place: str):
         self.__code = code
         self.__name = name
         self.__place = place
 
-    def get_code(self):
+    def get_code(self) -> int:
         return self.__code
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self.__name
 
-    def get_place(self):
+    def get_place(self) -> str:
         return self.__place
     
-    def print_data(self):
+    def print_data(self) -> None:
          print(self.__code, self.__name, self.__place)
 
 
-def parse_inspectors(file_path):
+def parse_inspectors(file_path) -> list[Inspector]:
     file = open(file_path, 'r')
     lines = file.readlines()
     file.close()
@@ -27,6 +27,6 @@ def parse_inspectors(file_path):
         try:
             inspectors.append(Inspector(int(line[0:3]), line[3:23].strip(), line[23:43].strip()))
         except ValueError:
-            print("Inspector code for", line[3:23].strip(), "is nan")
+            print("Invalid inspector data:", line)
 
     return inspectors

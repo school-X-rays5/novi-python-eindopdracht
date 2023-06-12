@@ -1,15 +1,12 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import coordinate
-import globals
+import globals as G
 import company as company_struct
 import inspector as inspector_struct
 import report as report_struct
 
 def init():
-    globals.companies = company_struct.parse_companies(globals.COMPANIES_PATH)
-    globals.inspectors = inspector_struct.parse_inspectors(globals.INSPECTORS_PATH)
-    globals.reports = report_struct.parse_reports(globals.REPORTS_PATH)
+    G.companies = company_struct.parse_companies(G.COMPANIES_PATH)
+    G.inspectors = inspector_struct.parse_inspectors(G.INSPECTORS_PATH)
+    G.reports = report_struct.parse_reports(G.REPORTS_PATH)
 
 def main():
     init()

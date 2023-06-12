@@ -3,7 +3,7 @@ import globals
 import coordinate
 
 class GasConcentration:
-    def __init__(self, x, y, co2, ch4, no2, nh3):
+    def __init__(self, x: int, y: int, co2: float, ch4: float, no2: float, nh3: float):
         self.__x = x
         self.__y = y
         self.__co2 = co2
@@ -11,34 +11,33 @@ class GasConcentration:
         self.__no2 = no2
         self.__nh3 = nh3
 
-    def get_x(self):
+    def get_x(self) -> int:
         return self.__x
 
-    def get_y(self):
+    def get_y(self) -> int:
         return self.__y
 
-    def get_co2(self):
+    def get_co2(self) -> float:
         return self.__co2
 
-    def get_ch4(self):
+    def get_ch4(self) -> float:
         return self.__ch4
 
-    def get_no2(self):
+    def get_no2(self) -> float:
         return self.__no2
 
-    def get_nh3(self):
+    def get_nh3(self) -> float:
         return self.__nh3
 
+def LoadGasses(file_path) -> np.ndarray:
+    return np.loadtxt(file_path, delimiter = ',', skiprows = 1)
 
-def LoadGasses(file_path):
-    return np.loadtxt(file_path, delimiter=',', skiprows=1)
-
-def GetHighUnknownConcentration(gasses_arr):
+def GetHighUnknownConcentration(gasses_arr) -> GasConcentration:
     company_areas = []
     for company in globals.companies:
         company_areas.append(coordinate.GetAreaAroundCoordinate(company.get_x(), company.get_y(), 5))
 
-    highest = GasConcentration(0,0,0,0,0,0)
+    highest = GasConcentration(0, 0, 0, 0, 0, 0)
     for row in gasses_arr:
         x = row[0]
         y = row[1]
