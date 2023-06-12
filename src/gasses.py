@@ -1,6 +1,17 @@
 import numpy as np
-import globals
+
 import coordinate
+import globals
+
+CO2_WEIGHT = 1
+CH4_WEIGHT = 25
+NO2_WEIGHT = 5
+NH3_WEIGHT = 1000
+
+
+def calculate_weighted_emmissions(co2: float, ch4: float, no2: float, nh3: float) -> float:
+    return (CO2_WEIGHT * co2) + (CH4_WEIGHT * ch4) + (NO2_WEIGHT * no2) + (NH3_WEIGHT * nh3)
+
 
 class GasConcentration:
     def __init__(self, x: int, y: int, co2: float, ch4: float, no2: float, nh3: float):
@@ -10,6 +21,7 @@ class GasConcentration:
         self.__ch4 = ch4
         self.__no2 = no2
         self.__nh3 = nh3
+        self.__weighted_emmissions = calculate_weighted_emmissions(co2, ch4, no2, nh3)
 
     def get_x(self) -> int:
         return self.__x
@@ -29,8 +41,19 @@ class GasConcentration:
     def get_nh3(self) -> float:
         return self.__nh3
 
+    def get_weighted_emmissions(self) -> float:
+        return self.__weighted_emmissions
+
+    def print_data(self):
+        print(
+            f"x: {self.__x}, y: {self.__y}, co2: {self.__co2}, ch4: {self.__ch4}, no2: {self.__no2}, nh3: {self.__nh3}, co2 equivalent: {self.__weighted_emmissions}")
+
+
 def LoadGasses(file_path) -> np.ndarray:
-    return np.loadtxt(file_path, delimiter = ',', skiprows = 1)
+    try:
+        return np.loadtxt(file_path, delimiter=',', skiprows=1)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File not found: {file_path}")
 
 def GetHighUnknownConcentration(gasses_arr) -> GasConcentration:
     company_areas = []

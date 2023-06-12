@@ -2,7 +2,11 @@ import os
 from datetime import datetime
 from typing import Union
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 import company as company_struct
+import gasses
 import globals as G
 import inspector as inspector_struct
 import report as report_struct
@@ -159,12 +163,87 @@ def display_data():
         return
 
 
-main_options = {1: display_data}
+def load_measurement_file():
+    path = input("Path to measurement file: ")
+    if not os.path.isfile(path):
+        print("File not found")
+        pause_terminal()
+        measurement_file()
+        return
+
+    G.loaded_measurement = gasses.LoadGasses(path)
+
+
+def plot_gas(idx: int):
+    plot_data = G.loaded_measurement[:, idx + 2].reshape(100, 100)
+    plt.imshow(plot_data)
+    plt.colorbar()
+    plt.show()
+
+
+def plot_weighted():
+    weighted_gasses = np.empty(10000)
+
+    for i in range(10000):
+        weighted_gasses[i] = gasses.calculate_weighted_emmissions(G.loaded_measurement[i][2],
+                                                                  G.loaded_measurement[i][3],
+                                                                  G.loaded_measurement[i][4],
+                                                                  G.loaded_measurement[i][5])
+
+    plt.imshow(weighted_gasses.reshape(100, 100))
+    plt.colorbar()
+    plt.show()
+
+
+measurement_plot_options = {
+    1: lambda: [plot_gas(0)],
+    2: lambda: [plot_gas(1)],
+    3: lambda: [plot_gas(2)],
+    4: lambda: [plot_gas(3)],
+    5: plot_weighted,
+    6: lambda: []
+}
+
+
+def plot_measurement_data():
+    print("1. co2"
+          "\n2. ch4"
+          "\n3. no2"
+          "\n4. nh4"
+          "\n5. weighted gasses"
+          "\n6. Main menu")
+
+    if not choose_option(measurement_plot_options):
+        plot_measurement_data()
+        return
+
+measurement_options = {
+    1: load_measurement_file,
+    2: plot_measurement_data,
+    4: lambda: []
+}
+
+
+def measurement_file():
+    if G.loaded_measurement is None:
+        load_measurement_file()
+
+    print("1. Load other measurement file"
+          "\n2. Plot data"
+          "\n4. Main menu")
+
+    if not choose_option(measurement_options):
+        measurement_file()
+        return
+
+
+main_options = {1: display_data,
+                2: measurement_file}
 
 
 def main():
     print("1. Display data"
-          "\n2. ")
+          "\n2. Measurement file")
 
     if not choose_option(main_options):
         main()

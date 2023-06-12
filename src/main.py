@@ -22,8 +22,10 @@ def save():
     print("exit")
 
 
-def uncaught_exception(type, value, traceback):
-    og_excepthook(type, value, traceback)
+def uncaught_exception(type, value, traceback, initial_exception=True):
+    if initial_exception:
+        og_excepthook(type, value, traceback)
+
     choice = input("Crash detected. Want to save? (Y/n): ")
     if choice.lower() == "y" or not choice:
         save()
@@ -32,7 +34,7 @@ def uncaught_exception(type, value, traceback):
         return
 
     print("Invalid input")
-    uncaught_exception()
+    uncaught_exception(type, value, traceback, False)
 
 
 def main():
