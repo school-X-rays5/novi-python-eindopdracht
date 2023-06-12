@@ -1,6 +1,6 @@
 class Company:
-    def __init__(self, code: int, name: str, street: str, house_number: str, postal_code: str, city: str, x: int, y: int, max_emissions: str, emissions: str, fine: str, check: str, check_freq: str, contact_person: str):
-        self.__code = code
+    def __init__(self, code: str, name: str, street: str, house_number: str, postal_code: str, city: str, x: str, y: str, max_emissions: str, emissions: str, fine: str, check: str, check_freq: str, contact_person: str):
+        self.__code = int(code)
         self.__name = name
         self.__street = street
         self.__house_number = house_number
@@ -9,11 +9,11 @@ class Company:
         self.__x = int(x)
         self.__y = int(y)
         self.__max_emissions = max_emissions
-        self.__emissions = emissions
-        self.__fine = fine
+        self.__emissions = emissions if emissions.strip() else ""
+        self.__fine = fine if fine.strip() else ""
         self.__check = check
-        self.__check_freq = int(check_freq) if check_freq else 0
-        self.__contact_person = contact_person
+        self.__check_freq = int(check_freq) if check_freq.strip() else 0
+        self.__contact_person = contact_person if contact_person.strip() else ""
 
     def get_code(self) -> int:
         return self.__code
@@ -58,7 +58,21 @@ class Company:
         return self.__contact_person
 
     def print_data(self) -> None:
-        print(self.__code, self.__name, self.__street, self.__house_number, self.__postal_code, self.__city, self.__x, self.__y, self.__max_emissions, self.__emissions, self.__fine, self.__check, self.__check_freq, self.__contact_person)
+        print(f"Company Code: {self.__code}", end=", ")
+        print(f"Name: {self.__name.strip()}", end=", ")
+        print(f"Street: {self.__street.strip()}", end=", ")
+        print(f"House Number: {self.__house_number.strip()}", end=", ")
+        print(f"Postal Code: {self.__postal_code.strip()}", end=", ")
+        print(f"City: {self.__city.strip()}", end=", ")
+        print(f"X: {self.__x}", end=", ")
+        print(f"Y: {self.__y}", end=", ")
+        print(f"Max Emissions: {self.__max_emissions.strip()}", end=", ")
+        print(f"Emissions: {self.__emissions.strip()}", end=", ")
+        print(f"Fine: {self.__fine.strip()}", end=", ")
+        print(f"Check: {self.__check.strip()}", end=", ")
+        print(f"Check Frequency: {self.__check_freq}", end=", ")
+        print(f"Contact Person: {self.__contact_person.strip()}")
+
 
 def parse_companies(file_path) -> list[Company]:
     file = open(file_path, 'r')
@@ -68,7 +82,7 @@ def parse_companies(file_path) -> list[Company]:
     companies = []
     for line in lines:
         try:
-            companies.append(Company(int(line[0:4]), line[4:24], line[24:54], line[54:59], line[59:65], line[65:85], int(line[85:87]), int(line[87:89]), line[89:99], line[99:109], line[109:117], line[117:118], line[118:120], line[120:140]))
+            companies.append(Company(line[0:4], line[4:24], line[24:54], line[54:59], line[59:65], line[65:85], line[85:87], line[87:89], line[89:99], line[99:109], line[109:117], line[117:118], line[118:120], line[120:140]))
         except ValueError:
             print("Invalid company data:", line)
 

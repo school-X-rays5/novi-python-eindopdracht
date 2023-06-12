@@ -26,7 +26,13 @@ class Report:
         return self.__comment
 
     def print_data(self) -> None:
-        print(self.__inspector_code, self.__company_code, self.__visit_date, self.__report_date, self.__status, self.__comment)
+        print(f"Inspector Code: {self.__inspector_code}", end=", ")
+        print(f"Company Code: {self.__company_code}", end=", ")
+        print(f"Visit Date: {self.__visit_date.strip()}", end=", ")
+        print(f"Report Date: {self.__report_date.strip()}", end=", ")
+        print(f"Status: {self.__status.strip()}", end=", ")
+        print(f"Comment: {self.__comment.strip()}")
+
 
 def parse_reports(file_path) -> list[Report]:
     file = open(file_path, 'r')

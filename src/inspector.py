@@ -12,9 +12,11 @@ class Inspector:
 
     def get_place(self) -> str:
         return self.__place
-    
+
     def print_data(self) -> None:
-         print(self.__code, self.__name, self.__place)
+        print(f"Inspector Code: {self.__code}", end=", ")
+        print(f"Name: {self.__name.strip()}", end=", ")
+        print(f"Place: {self.__place.strip()}")
 
 
 def parse_inspectors(file_path) -> list[Inspector]:
