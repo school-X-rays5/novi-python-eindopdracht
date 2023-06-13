@@ -185,7 +185,7 @@ def plot_weighted():
     weighted_gasses = np.empty(10000)
 
     for i in range(10000):
-        weighted_gasses[i] = gasses.calculate_weighted_emmissions(G.loaded_measurement[i][2],
+        weighted_gasses[i] = gasses.calculate_weighted_emissions(G.loaded_measurement[i][2],
                                                                   G.loaded_measurement[i][3],
                                                                   G.loaded_measurement[i][4],
                                                                   G.loaded_measurement[i][5])
@@ -222,12 +222,18 @@ def print_high_unknown_gas_concentration():
     gasses.get_high_unknown_gas_concentration(G.loaded_measurement).print_data()
     pause_terminal()
 
+def show_company_fines():
+    for company in G.companies:
+        fine = company.calculate_fine()
+        print("Fine for", company.get_name().strip(), "is", format(fine, ','), "euro")
+    pause_terminal()
 
 measurement_options = {
     1: load_measurement_file,
     2: plot_measurement_data,
     3: print_high_unknown_gas_concentration,
-    4: lambda: []
+    4: show_company_fines,
+    5: lambda: []
 }
 
 
@@ -238,7 +244,8 @@ def measurement_file():
     print("1. Load other measurement file"
           "\n2. Plot data"
           "\n3. Find high unknown gas concentration"
-          "\n4. Main menu")
+          "\n4. Calculate fines"
+          "\n5. Main menu")
 
     if not choose_option(measurement_options):
         measurement_file()

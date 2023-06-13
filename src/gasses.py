@@ -9,7 +9,7 @@ NO2_WEIGHT = 5
 NH3_WEIGHT = 1000
 
 
-def calculate_weighted_emmissions(co2: float, ch4: float, no2: float, nh3: float) -> float:
+def calculate_weighted_emissions(co2: float, ch4: float, no2: float, nh3: float) -> float:
     return (CO2_WEIGHT * co2) + (CH4_WEIGHT * ch4) + (NO2_WEIGHT * no2) + (NH3_WEIGHT * nh3)
 
 
@@ -21,7 +21,7 @@ class GasConcentration:
         self.__ch4 = ch4
         self.__no2 = no2
         self.__nh3 = nh3
-        self.__weighted_emmissions = calculate_weighted_emmissions(co2, ch4, no2, nh3)
+        self.__weighted_emissions = calculate_weighted_emissions(co2, ch4, no2, nh3)
 
     def get_x(self) -> int:
         return self.__x
@@ -41,12 +41,12 @@ class GasConcentration:
     def get_nh3(self) -> float:
         return self.__nh3
 
-    def get_weighted_emmissions(self) -> float:
-        return self.__weighted_emmissions
+    def get_weighted_emissions(self) -> float:
+        return self.__weighted_emissions
 
     def print_data(self):
         print(
-            f"x: {self.__x}, y: {self.__y}, co2: {self.__co2}, ch4: {self.__ch4}, no2: {self.__no2}, nh3: {self.__nh3}, co2 equivalent: {self.__weighted_emmissions}")
+            f"x: {self.__x}, y: {self.__y}, co2: {self.__co2}, ch4: {self.__ch4}, no2: {self.__no2}, nh3: {self.__nh3}, co2 equivalent: {self.__weighted_emissions}")
 
 
 def LoadGasses(file_path) -> np.ndarray:
@@ -79,8 +79,62 @@ def get_high_unknown_gas_concentration(gasses_arr) -> GasConcentration:
         if is_inside_area:
             continue
 
-        emissions = calculate_weighted_emmissions(row[2], row[3], row[4], row[5])
-        if emissions > highest.get_weighted_emmissions():
+        emissions = calculate_weighted_emissions(row[2], row[3], row[4], row[5])
+        if emissions > highest.get_weighted_emissions():
             highest = GasConcentration(row[0], row[1], row[2], row[3], row[4], row[5])
 
     return highest
+
+def get_above_average_unknown_gas_concentrations(gasses_arr) -> list[GasConcentration]:
+    company_areas = []
+    for company in globals.companies:
+        company_areas.append(coordinate.GetAreaAroundCoordinate(company.get_x(), company.get_y(), 5))
+
+    total_emissions = 0
+    count = 0
+    for row in gasses_arr:
+        x = row[0]
+        y = row[1]
+        if x < 2 or x > 97:
+            continue
+        elif y < 2 or y > 97:
+            continue
+
+        is_inside_area = False
+        for company_area in company_areas:
+            if coordinate.IsCoordinateInArea(coordinate.Coordinate(x, y), company_area):
+                is_inside_area = True
+                break  # Exit the loop when an intersection is found
+
+        if is_inside_area:
+            continue
+
+        emissions = calculate_weighted_emissions(row[2], row[3], row[4], row[5])
+        total_emissions += emissions
+        count += 1
+
+    average_emissions = total_emissions / count if count > 0 else 0
+    above_average = []
+
+    for row in gasses_arr:
+        x = row[0]
+        y = row[1]
+        if x < 2 or x > 97:
+            continue
+        elif y < 2 or y > 97:
+            continue
+
+        is_inside_area = False
+        for company_area in company_areas:
+            if coordinate.IsCoordinateInArea(coordinate.Coordinate(x, y), company_area):
+                is_inside_area = True
+                break  # Exit the loop when an intersection is found
+
+        if is_inside_area:
+            continue
+
+        emissions = calculate_weighted_emissions(row[2], row[3], row[4], row[5])
+        if emissions > average_emissions:
+            above_average.append(GasConcentration(row[0], row[1], row[2], row[3], row[4], row[5]))
+
+    return above_average

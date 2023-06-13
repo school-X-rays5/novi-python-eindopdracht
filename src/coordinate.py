@@ -47,3 +47,9 @@ def GetOutsideCoordinates(area) -> list[Coordinate]:
             ):
                 outside_coordinates.append(Coordinate(x, y))
     return outside_coordinates
+
+def IsCoordinateInList(x, y, coordinate_list):
+    for coord in coordinate_list:
+        if coord.get_x() == x and coord.get_y() == y:
+            return True
+    return False

@@ -1,16 +1,14 @@
+from typing import Any
+
 import numpy as np
 
-import company
-import inspector
-import report
-
 COMPANIES_PATH = "input/companies.txt"
-companies = list[company.Company]
+companies = list[Any]
 
 INSPECTORS_PATH = "input/inspectors.txt"
-inspectors = list[inspector.Inspector]
+inspectors = list[Any]
 
 REPORTS_PATH = "input/reports.txt"
-reports = list[report.Report]
+reports = list[Any]
 
 loaded_measurement: None | np.ndarray = None
