@@ -1,6 +1,5 @@
 import atexit
 import os
-import sys
 
 import company as company_struct
 import globals as G
@@ -9,7 +8,6 @@ import menu
 import report as report_struct
 
 main_menu_active = True
-og_excepthook = sys.excepthook
 
 
 def init():
@@ -22,27 +20,11 @@ def save():
     print("exit")
 
 
-def uncaught_exception(type, value, traceback, initial_exception=True):
-    if initial_exception:
-        og_excepthook(type, value, traceback)
-
-    choice = input("Crash detected. Want to save? (Y/n): ")
-    if choice.lower() == "y" or not choice:
-        save()
-        return
-    elif choice.lower() == "n":
-        return
-
-    print("Invalid input")
-    uncaught_exception(type, value, traceback, False)
-
-
 def main():
     os.system("cls || clear")
     init()
 
     atexit.register(save)
-    sys.excepthook = uncaught_exception
 
     while main_menu_active:
         menu.main()
