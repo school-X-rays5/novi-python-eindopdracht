@@ -21,14 +21,14 @@ def save():
 
 
 def main():
-    os.system("cls || clear")
+    os.system("cls" if os.name == "nt" else "clear")
     init()
 
     atexit.register(save)
 
     while main_menu_active:
         menu.main()
-        os.system("cls || clear")
+        os.system("cls" if os.name == "nt" else "clear")
 
 
 if __name__ == '__main__':

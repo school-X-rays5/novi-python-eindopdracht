@@ -53,3 +53,15 @@ def IsCoordinateInList(x, y, coordinate_list):
         if coord.get_x() == x and coord.get_y() == y:
             return True
     return False
+
+
+def get_surrounding_coordinates(x, y):
+    surrounding_coordinates = []
+
+    for dx in [-1, 0, 1]:
+        for dy in [-1, 0, 1]:
+            if dx == 0 and dy == 0:
+                continue
+            surrounding_coordinates.append((x + dx, y + dy))
+
+    return surrounding_coordinates

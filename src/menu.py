@@ -10,14 +10,15 @@ import gasses
 import globals as G
 import inspector as inspector_struct
 import report as report_struct
+import menu_controller
 
 
 def clear_terminal():
-    os.system("cls || clear")
+    os.system("cls" if os.name == "nt" else "clear")
 
 
 def pause_terminal():
-    os.system("pause")
+    input("Press Enter to continue...")
 
 
 def choose_option(options) -> bool:
@@ -126,52 +127,19 @@ def print_reports_per_company():
 
     pause_terminal()
 
-
-display_report_filtered_options = {
-    1: print_reports_per_inspector,
-    2: print_reports_per_company,
-    3: lambda: []
-}
-
-
-def display_report_filtered():
-    clear_terminal()
-    print("1. Print reports per inspector"
-          "\n2. Print reports per company"
-          "\n3. Main menu")
-
-    if not choose_option(display_report_filtered_options):
-        display_report_filtered()
-        return
-
-
-data_display_options = {1: lambda: [print_data(G.inspectors)],
-                        2: lambda: [print_data(G.companies)],
-                        3: display_report_filtered,
-                        4: lambda: []}
-
-
-def display_data():
-    clear_terminal()
-    print("1. Print inspector data"
-          "\n2. Print company data"
-          "\n3. Report filtered data"
-          "\n4. Main menu")
-
-    if not choose_option(data_display_options):
-        display_data()
-        return
-
-
 def load_measurement_file():
     path = input("Path to measurement file: ")
-    if not os.path.isfile(path):
-        print("File not found")
+    if not os.path.isfile(path) or not path.endswith(".csv"):
+        print("Invalid file")
         pause_terminal()
-        measurement_file()
+        load_measurement_file()
         return
 
-    G.loaded_measurement = gasses.LoadGasses(path)
+    try:
+        G.loaded_measurement = gasses.LoadGasses(path)
+    except ValueError:
+        print("Invalid file contents")
+        load_measurement_file()
 
 
 def plot_gas(idx: int):
@@ -194,32 +162,13 @@ def plot_weighted():
     plt.colorbar()
     plt.show()
 
-
-measurement_plot_options = {
-    1: lambda: [plot_gas(0)],
-    2: lambda: [plot_gas(1)],
-    3: lambda: [plot_gas(2)],
-    4: lambda: [plot_gas(3)],
-    5: plot_weighted,
-    6: lambda: []
-}
-
-
-def plot_measurement_data():
-    print("1. co2"
-          "\n2. ch4"
-          "\n3. no2"
-          "\n4. nh4"
-          "\n5. weighted gasses"
-          "\n6. Main menu")
-
-    if not choose_option(measurement_plot_options):
-        plot_measurement_data()
-        return
-
+def print_above_average_unknown_gas_concentration():
+    for concentration in gasses.get_above_average_unknown_gas_concentrations(G.loaded_measurement):
+        concentration.print_data()
+    pause_terminal()
 
 def print_high_unknown_gas_concentration():
-    gasses.get_high_unknown_gas_concentration(G.loaded_measurement).print_data()
+    gasses.get_high_unknown_gas_concentration(G.loaded_measurement, gasses.get_company_areas()).print_data()
     pause_terminal()
 
 def show_company_fines():
@@ -228,38 +177,42 @@ def show_company_fines():
         print("Fine for", company.get_name().strip(), "is", format(fine, ','), "euro")
     pause_terminal()
 
-measurement_options = {
-    1: load_measurement_file,
-    2: plot_measurement_data,
-    3: print_high_unknown_gas_concentration,
-    4: show_company_fines,
-    5: lambda: []
-}
-
-
-def measurement_file():
-    if G.loaded_measurement is None:
-        load_measurement_file()
-
-    print("1. Load other measurement file"
-          "\n2. Plot data"
-          "\n3. Find high unknown gas concentration"
-          "\n4. Calculate fines"
-          "\n5. Main menu")
-
-    if not choose_option(measurement_options):
-        measurement_file()
-        return
-
-
-main_options = {1: display_data,
-                2: measurement_file}
-
-
 def main():
-    print("1. Display data"
-          "\n2. Measurement file")
+    report_filtered_menu = menu_controller.Menu("Report filtered data", [
+        ("Print reports per inspector", print_reports_per_inspector),
+        ("Print reports per company", print_reports_per_company)
+    ])
+    display_data_menu = menu_controller.Menu("Display data", [
+        ("Print inspector data", lambda: [print_data(G.inspectors)]),
+        ("Print company data", lambda: [print_data(G.companies)]),
+        ("Report filtered data", report_filtered_menu)
+    ])
 
-    if not choose_option(main_options):
-        main()
-        return
+
+    plot_measurement_data_menu = menu_controller.Menu("Plot measurement data", [
+        ("co2", lambda: [plot_gas(0)]),
+        ("ch4", lambda: [plot_gas(1)]),
+        ("no2", lambda: [plot_gas(2)]),
+        ("nh4", lambda: [plot_gas(3)]),
+        ("co2 equivalent", plot_weighted)
+    ])
+
+    high_gas_concentration_menu = menu_controller.Menu("Unknown high gas concentration", [
+        ("All unknown above average", print_above_average_unknown_gas_concentration),
+        ("Highest unknown", print_high_unknown_gas_concentration)
+    ])
+
+    measurement_file_menu = menu_controller.Menu("Measurement file", [
+        ("Load other measurement file", load_measurement_file),
+        ("Plot data", plot_measurement_data_menu),
+        ("Find high gas concentration", high_gas_concentration_menu),
+        ("Calculate fines", show_company_fines)
+    ], lambda: [load_measurement_file() if G.loaded_measurement is None else None])
+
+
+    main_menu = menu_controller.Menu("Main Menu", [
+        ("Display data", display_data_menu),
+        ("Measurement file", measurement_file_menu)
+    ])
+
+    main_menu.display()

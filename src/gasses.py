@@ -1,7 +1,8 @@
 import numpy as np
 
 import coordinate
-import globals
+import globals as G
+import company
 
 CO2_WEIGHT = 1
 CH4_WEIGHT = 25
@@ -12,6 +13,12 @@ NH3_WEIGHT = 1000
 def calculate_weighted_emissions(co2: float, ch4: float, no2: float, nh3: float) -> float:
     return (CO2_WEIGHT * co2) + (CH4_WEIGHT * ch4) + (NO2_WEIGHT * no2) + (NH3_WEIGHT * nh3)
 
+
+def calculate_average_weighted_emissions(gasses_arr):
+    emissions = gasses_arr[:, 2:6]  # Extract columns 2 to 5 (CO2, CH4, NO2, NH3)
+    weighted_emissions = np.apply_along_axis(lambda row: calculate_weighted_emissions(*row), 1, emissions)
+
+    return np.mean(weighted_emissions)
 
 class GasConcentration:
     def __init__(self, x: int, y: int, co2: float, ch4: float, no2: float, nh3: float):
@@ -56,27 +63,36 @@ def LoadGasses(file_path) -> np.ndarray:
         raise FileNotFoundError(f"File not found: {file_path}")
 
 
-def get_high_unknown_gas_concentration(gasses_arr) -> GasConcentration:
+def get_company_areas():
     company_areas = []
-    for company in globals.companies:
+    for company in G.companies:
         company_areas.append(coordinate.GetAreaAroundCoordinate(company.get_x(), company.get_y(), 5))
 
+    return company_areas
+
+def is_coordinate_valid(x, y):
+    if x < 2 or x > 97 or y < 2 or y > 97:
+        return False
+
+    return True
+
+def is_coordinate_inside_area(cord, company_areas):
+    for company_area in company_areas:
+        if coordinate.IsCoordinateInArea(cord, company_area):
+            return True
+
+    return False
+
+def get_high_unknown_gas_concentration(gasses_arr, company_areas):
     highest = GasConcentration(0, 0, 0, 0, 0, 0)
     for row in gasses_arr:
         x = row[0]
         y = row[1]
-        if x < 2 or x > 97:
-            continue
-        elif y < 2 or y > 97:
+
+        if not is_coordinate_valid(x, y):
             continue
 
-        is_inside_area = False
-        for company_area in company_areas:
-            if coordinate.IsCoordinateInArea(coordinate.Coordinate(x, y), company_area):
-                is_inside_area = True
-                break  # Exit the loop when an intersection is found
-
-        if is_inside_area:
+        if is_coordinate_inside_area(coordinate.Coordinate(x, y), company_areas):
             continue
 
         emissions = calculate_weighted_emissions(row[2], row[3], row[4], row[5])
@@ -85,56 +101,20 @@ def get_high_unknown_gas_concentration(gasses_arr) -> GasConcentration:
 
     return highest
 
-def get_above_average_unknown_gas_concentrations(gasses_arr) -> list[GasConcentration]:
-    company_areas = []
-    for company in globals.companies:
-        company_areas.append(coordinate.GetAreaAroundCoordinate(company.get_x(), company.get_y(), 5))
 
-    total_emissions = 0
-    count = 0
-    for row in gasses_arr:
-        x = row[0]
-        y = row[1]
-        if x < 2 or x > 97:
-            continue
-        elif y < 2 or y > 97:
-            continue
+def get_above_average_unknown_gas_concentrations(gasses_arr):
+    company_areas = get_company_areas()
+    average = calculate_average_weighted_emissions(gasses_arr)
+    found_items = []  # List to store found concentrations
 
-        is_inside_area = False
-        for company_area in company_areas:
-            if coordinate.IsCoordinateInArea(coordinate.Coordinate(x, y), company_area):
-                is_inside_area = True
-                break  # Exit the loop when an intersection is found
+    while True:
+        found_concentration = get_high_unknown_gas_concentration(gasses_arr, company_areas)
 
-        if is_inside_area:
-            continue
+        if found_concentration.get_weighted_emissions() > average:
+            found_items.append(found_concentration)  # Append found concentration to the list
+            company_areas.append(
+                coordinate.GetAreaAroundCoordinate(found_concentration.get_x(), found_concentration.get_y(), 5))
+        else:
+            break
 
-        emissions = calculate_weighted_emissions(row[2], row[3], row[4], row[5])
-        total_emissions += emissions
-        count += 1
-
-    average_emissions = total_emissions / count if count > 0 else 0
-    above_average = []
-
-    for row in gasses_arr:
-        x = row[0]
-        y = row[1]
-        if x < 2 or x > 97:
-            continue
-        elif y < 2 or y > 97:
-            continue
-
-        is_inside_area = False
-        for company_area in company_areas:
-            if coordinate.IsCoordinateInArea(coordinate.Coordinate(x, y), company_area):
-                is_inside_area = True
-                break  # Exit the loop when an intersection is found
-
-        if is_inside_area:
-            continue
-
-        emissions = calculate_weighted_emissions(row[2], row[3], row[4], row[5])
-        if emissions > average_emissions:
-            above_average.append(GasConcentration(row[0], row[1], row[2], row[3], row[4], row[5]))
-
-    return above_average
+    return found_items
