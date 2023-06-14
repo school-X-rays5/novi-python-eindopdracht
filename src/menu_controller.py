@@ -1,10 +1,14 @@
 import os
 
+
 class Menu:
-    def __init__(self, title, options, enter_action=None):
+    def __init__(self, title: str, options: list[tuple[str, any]], enter_action=None):
         self.title = title
         self.options = options
         self.enter_action = enter_action
+
+    def add_option(self, opt: tuple[str, any]):
+        self.options.append(opt)
 
     def display(self):
         while True:
