@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import company as company_struct
+import coordinate
 import gasses
 import globals as G
 import inspector as inspector_struct
@@ -182,12 +183,60 @@ def show_company_fines():
     pause_terminal()
 
 
-def select_company() -> int:
+def select_company_from_xy() -> int:
+    clear_terminal()
+
+    x = input("Enter x coordinate: ")
+    y = input("Enter y coordinate: ")
+
+    if not x.isdigit() or not y.isdigit():
+        print("Input not a number")
+        pause_terminal()
+        return select_company_from_xy()
+
+    if (int(x) > 99 or int(x) < 0) or (int(y) > 99 or int(y) < 0):
+        print("Invalid coordinates")
+        pause_terminal()
+        return select_company_from_xy()
+
+    company_locations = []
+    for company in G.companies:
+        company_locations.append(coordinate.Coordinate(company.get_x(), company.get_y()))
+
+    nearest = coordinate.get_nearest_coordinate(int(x), int(y), company_locations)
+    if nearest is None:
+        print("Invalid coordinates")
+        pause_terminal()
+        return select_company_from_xy()
+
+    company = company_struct.from_xy(nearest.get_x(), nearest.get_y())
+    if company is None:
+        print("Invalid coordinates")
+        pause_terminal()
+        return -1
+
+    return company
+
+
+def select_company_from_name() -> int:
+    clear_terminal()
+    name = input("Enter company name: ")
+
+    for i, company in enumerate(G.companies):
+        if name.lower() in company.get_name().strip().lower():
+            return i
+
+    print("Company not found")
+    pause_terminal()
+    return -1
+
+
+def select_company_from_list() -> int:
     clear_terminal()
     for i, company in enumerate(G.companies):
         print(i + 1, company.get_name().strip())
 
-    choice = input("Enter choice: ")
+    choice = input("\nEnter choice: ")
     if choice.isdigit() and (0 > int(choice) and int(choice) <= len(G.companies)):
         print("Invalid choice")
         pause_terminal()
@@ -197,7 +246,30 @@ def select_company() -> int:
     return int(choice) - 1
 
 
+def select_company() -> int:
+    clear_terminal()
+    print("1. Search company by x, y"
+          "\n2. Search company by name"
+          "\n3. Select company from list")
+
+    choice = input("\nEnter choice: ")
+    if choice.isdigit() and (0 > int(choice) and int(choice) <= 3):
+        print("Invalid choice")
+        pause_terminal()
+        return select_company()
+
+    if choice == "1":
+        return select_company_from_xy()
+    elif choice == "2":
+        return select_company_from_name()
+    elif choice == "3":
+        return select_company_from_list()
+
+    return -1
+
+
 def add_company():
+    clear_terminal()
     company = company_struct.create_empty_company()
     company.set_code_input()
     company.set_name_input()
@@ -221,23 +293,27 @@ def add_company():
 
 def edit_company():
     selected = select_company()
+    if selected == -1:
+        return edit_company()
+
+    clear_terminal()
+
+    print("Selected company:", G.companies[selected].get_name().strip())
+
     print("1. Code"
           "\n2. Name"
           "\n3. Street"
           "\n4. House number"
           "\n5. Postal code"
           "\n6. City"
-          "\n7. X"
-          "\n8. Y"
-          "\n9. Max emissions"
-          "\n10. Emissions"
-          "\n11. Fine"
-          "\n12. Check"
-          "\n13. Check frequency"
-          "\n14. Contact person")
+          "\n7. Max emissions"
+          "\n8. Check"
+          "\n9. Check frequency"
+          "\n10. Contact person"
+          "\n0. Cancel")
 
-    choice = input("Enter choice: ")
-    if not choice.isdigit() or not (0 < int(choice) <= 14):
+    choice = input("\nEnter choice: ")
+    if not choice.isdigit() or not (0 < int(choice) <= 11):
         print("Invalid choice")
         pause_terminal()
         edit_company()
@@ -258,21 +334,15 @@ def edit_company():
     elif choice == "6":
         company.set_city_input()
     elif choice == "7":
-        company.set_x_input()
-    elif choice == "8":
-        company.set_y_input()
-    elif choice == "9":
         company.set_max_emissions_input()
-    elif choice == "10":
-        company.set_emissions_input()
-    elif choice == "11":
-        company.set_fine_input()
-    elif choice == "12":
+    elif choice == "8":
         company.set_check_input()
-    elif choice == "13":
+    elif choice == "9":
         company.set_check_freq_input()
-    elif choice == "14":
+    elif choice == "10":
         company.set_contact_person_input()
+    elif choice == "0":
+        return
 
     print("Company updated")
     company.print_data()

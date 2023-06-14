@@ -13,8 +13,8 @@ def calculate_total_emissions(x, y):
     class_3_emissions = 0  # 25%
 
     class_1_xy_list = [coordinate.Coordinate(x, y)]
-    class_2_xy_list = coordinate.GetOutsideCoordinates(coordinate.GetAreaAroundCoordinate(x, y, 1))
-    class_3_xy_list = coordinate.GetOutsideCoordinates(coordinate.GetAreaAroundCoordinate(x, y, 2))
+    class_2_xy_list = coordinate.get_outside_coordinates(coordinate.get_area_around_coordinate(x, y, 1))
+    class_3_xy_list = coordinate.get_outside_coordinates(coordinate.get_area_around_coordinate(x, y, 2))
 
     for row in G.loaded_measurement:
         row_x = row[0]
@@ -26,9 +26,9 @@ def calculate_total_emissions(x, y):
 
         if row_x == x and row_y == y:
             class_1_emissions += gasses.calculate_weighted_emissions(co2, ch4, no2, nh4)
-        elif coordinate.IsCoordinateInList(row_x, row_y, class_2_xy_list):
+        elif coordinate.is_coordinate_in_list(row_x, row_y, class_2_xy_list):
             class_2_emissions += gasses.calculate_weighted_emissions(co2, ch4, no2, nh4) * 0.5
-        elif coordinate.IsCoordinateInList(row_x, row_y, class_3_xy_list):
+        elif coordinate.is_coordinate_in_list(row_x, row_y, class_3_xy_list):
             class_3_emissions += gasses.calculate_weighted_emissions(co2, ch4, no2, nh4) * 0.25
 
     total_emissions = class_1_emissions + class_2_emissions + class_3_emissions
@@ -185,6 +185,11 @@ class Company:
             self.set_x_input()
             return
 
+        if int(x) > 99 or int(x) < 0:
+            print("X coordinate must be between 0 and 99")
+            self.set_x_input()
+            return
+
         self.__x = int(x)
 
     def get_y(self) -> int:
@@ -204,6 +209,11 @@ class Company:
 
         if not y.isdigit():
             print("Y coordinate must be digits only")
+            self.set_y_input()
+            return
+
+        if int(y) > 99 or int(y) < 0:
+            print("Y coordinate must be between 0 and 99")
             self.set_y_input()
             return
 
@@ -291,14 +301,19 @@ class Company:
         clear_terminal()
 
         check = input("Enter check: ")
-        check = check.lower()  # Convert input to uppercase for case-insensitive comparison
+        check = check.lower()  # Convert input to lowercase for case-insensitive comparison
 
-        if check not in ["j", "j"]:
-            print("Check must be 'j' or 'n'")
-            self.set_check_input()
+        if self.__check == "j":
+            print("Check is already set to 'j' and cannot be changed.")
             return
 
-        self.__check = check
+        if check == "n":
+            self.__check = "j"
+        elif check == "j":
+            print("Check is already set to 'j' and cannot be changed.")
+        else:
+            print("Check must be 'j' or 'n'")
+            self.set_check_input()
 
     def get_check_freq(self) -> int:
         return self.__check_freq
@@ -321,7 +336,13 @@ class Company:
                 self.set_check_freq_input()
                 return
 
-            self.__check_freq = int(check_freq)
+            check_freq_int = int(check_freq)
+            if check_freq_int < 1 or check_freq_int > 12:
+                print("Check frequency must be between 1 and 12 (inclusive)")
+                self.set_check_freq_input()
+                return
+
+            self.__check_freq = check_freq_int
         else:
             self.__check_freq = None
 
@@ -391,3 +412,11 @@ def parse_companies(file_path) -> list[Company]:
             print("Invalid company data:", line)
 
     return companies
+
+
+def from_xy(x, y) -> None | int:
+    for i, company in enumerate(G.companies):
+        if company.get_x() == x and company.get_y() == y:
+            return i
+
+    return None

@@ -17,7 +17,16 @@ def init():
 
 
 def save():
-    print("exit")
+    print("")
+    choice = input("Save changes? (y/n) ")
+    if choice.lower() == "y":
+        print("Saving...")
+    elif choice == "n":
+        return
+    else:
+        print("Invalid choice.")
+        save()
+        return
 
 
 def main():

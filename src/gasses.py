@@ -66,7 +66,7 @@ def LoadGasses(file_path) -> np.ndarray:
 def get_company_areas():
     company_areas = []
     for company in G.companies:
-        company_areas.append(coordinate.GetAreaAroundCoordinate(company.get_x(), company.get_y(), 5))
+        company_areas.append(coordinate.get_area_around_coordinate(company.get_x(), company.get_y(), 5))
 
     return company_areas
 
@@ -80,7 +80,7 @@ def is_coordinate_valid(x, y):
 
 def is_coordinate_inside_area(cord, company_areas):
     for company_area in company_areas:
-        if coordinate.IsCoordinateInArea(cord, company_area):
+        if coordinate.is_coordinate_in_area(cord, company_area):
             return True
 
     return False
@@ -120,7 +120,7 @@ def get_above_average_unknown_gas_concentrations(gasses_arr: np.ndarray):
 
         if concentration.get_weighted_emissions() > average:
             found_items.append(concentration)
-            company_areas.append(coordinate.GetAreaAroundCoordinate(concentration.get_x(), concentration.get_y(), 5))
+            company_areas.append(coordinate.get_area_around_coordinate(concentration.get_x(), concentration.get_y(), 5))
         else:
             break
 
