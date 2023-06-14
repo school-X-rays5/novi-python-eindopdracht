@@ -450,9 +450,9 @@ def save():
         os.remove(G.COMPANIES_PATH + ".bak")
     copyfile(G.COMPANIES_PATH, G.COMPANIES_PATH + ".bak")
 
-    if os.path.isfile(G.INSPECTORS_PATH + ".bak"):
-        os.remove(G.INSPECTORS_PATH + ".bak")
-    copyfile(G.INSPECTORS_PATH, G.INSPECTORS_PATH + ".bak")
+    if os.path.isfile(G.REPORTS_PATH + ".bak"):
+        os.remove(G.REPORTS_PATH + ".bak")
+    copyfile(G.REPORTS_PATH, G.REPORTS_PATH + ".bak")
 
     # save inspectors
     file = open(G.COMPANIES_PATH, 'w')
@@ -462,7 +462,7 @@ def save():
         file.write("\n")
     file.close()
 
-    file = open(G.INSPECTORS_PATH, 'w')
+    file = open(G.REPORTS_PATH, 'w')
     for report in G.reports:
         save_val = report.save_str()
         file.write(save_val)
