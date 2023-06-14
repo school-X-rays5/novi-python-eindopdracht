@@ -2,7 +2,6 @@ import numpy as np
 
 import coordinate
 import globals as G
-import company
 
 CO2_WEIGHT = 1
 CH4_WEIGHT = 25
@@ -19,6 +18,7 @@ def calculate_average_weighted_emissions(gasses_arr):
     weighted_emissions = np.apply_along_axis(lambda row: calculate_weighted_emissions(*row), 1, emissions)
 
     return np.mean(weighted_emissions)
+
 
 class GasConcentration:
     def __init__(self, x: int, y: int, co2: float, ch4: float, no2: float, nh3: float):
@@ -70,11 +70,13 @@ def get_company_areas():
 
     return company_areas
 
+
 def is_coordinate_valid(x, y):
     if x < 2 or x > 97 or y < 2 or y > 97:
         return False
 
     return True
+
 
 def is_coordinate_inside_area(cord, company_areas):
     for company_area in company_areas:
@@ -83,37 +85,42 @@ def is_coordinate_inside_area(cord, company_areas):
 
     return False
 
-def get_high_unknown_gas_concentration(gasses_arr, company_areas):
+
+def get_unknown_emissions(row, company_areas):
+    x = row[0]
+    y = row[1]
+
+    if not is_coordinate_valid(x, y):
+        return 0
+
+    if is_coordinate_inside_area(coordinate.Coordinate(x, y), company_areas):
+        return 0
+
+    return calculate_weighted_emissions(row[2], row[3], row[4], row[5])
+
+
+def get_high_unknown_gas_concentration(gasses_arr: np.ndarray, company_areas):
     highest = GasConcentration(0, 0, 0, 0, 0, 0)
+
     for row in gasses_arr:
-        x = row[0]
-        y = row[1]
-
-        if not is_coordinate_valid(x, y):
-            continue
-
-        if is_coordinate_inside_area(coordinate.Coordinate(x, y), company_areas):
-            continue
-
-        emissions = calculate_weighted_emissions(row[2], row[3], row[4], row[5])
+        emissions = get_unknown_emissions(row, company_areas)
         if emissions > highest.get_weighted_emissions():
             highest = GasConcentration(row[0], row[1], row[2], row[3], row[4], row[5])
 
     return highest
 
 
-def get_above_average_unknown_gas_concentrations(gasses_arr):
+def get_above_average_unknown_gas_concentrations(gasses_arr: np.ndarray):
     company_areas = get_company_areas()
-    average = calculate_average_weighted_emissions(gasses_arr)
-    found_items = []  # List to store found concentrations
+    average = calculate_average_weighted_emissions(gasses_arr) + 100  # add a small amount to avoid false positives
+    found_items = []
 
     while True:
-        found_concentration = get_high_unknown_gas_concentration(gasses_arr, company_areas)
+        concentration = get_high_unknown_gas_concentration(gasses_arr, company_areas)
 
-        if found_concentration.get_weighted_emissions() > average:
-            found_items.append(found_concentration)  # Append found concentration to the list
-            company_areas.append(
-                coordinate.GetAreaAroundCoordinate(found_concentration.get_x(), found_concentration.get_y(), 5))
+        if concentration.get_weighted_emissions() > average:
+            found_items.append(concentration)
+            company_areas.append(coordinate.GetAreaAroundCoordinate(concentration.get_x(), concentration.get_y(), 5))
         else:
             break
 
