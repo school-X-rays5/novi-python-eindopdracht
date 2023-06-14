@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from shutil import copyfile
 from typing import Union
 
 import matplotlib.pyplot as plt
@@ -205,13 +206,13 @@ def select_company_from_xy() -> int:
 
     nearest = coordinate.get_nearest_coordinate(int(x), int(y), company_locations)
     if nearest is None:
-        print("Invalid coordinates")
+        print("No company found")
         pause_terminal()
-        return select_company_from_xy()
+        return -1
 
     company = company_struct.from_xy(nearest.get_x(), nearest.get_y())
     if company is None:
-        print("Invalid coordinates")
+        print("No company found")
         pause_terminal()
         return -1
 
@@ -231,26 +232,10 @@ def select_company_from_name() -> int:
     return -1
 
 
-def select_company_from_list() -> int:
-    clear_terminal()
-    for i, company in enumerate(G.companies):
-        print(i + 1, company.get_name().strip())
-
-    choice = input("\nEnter choice: ")
-    if choice.isdigit() and (0 > int(choice) and int(choice) <= len(G.companies)):
-        print("Invalid choice")
-        pause_terminal()
-        return select_company()
-
-    clear_terminal()
-    return int(choice) - 1
-
-
 def select_company() -> int:
     clear_terminal()
     print("1. Search company by x, y"
-          "\n2. Search company by name"
-          "\n3. Select company from list")
+          "\n2. Search company by name")
 
     choice = input("\nEnter choice: ")
     if choice.isdigit() and (0 > int(choice) and int(choice) <= 3):
@@ -262,8 +247,6 @@ def select_company() -> int:
         return select_company_from_xy()
     elif choice == "2":
         return select_company_from_name()
-    elif choice == "3":
-        return select_company_from_list()
 
     return -1
 
@@ -394,11 +377,57 @@ def select_visit_report() -> int:
 
 
 def add_visit_report():
-    selected = select_visit_report()
+    clear_terminal()
+    report = report_struct.create_empty_report()
+    report.set_inspector_code_input()
+    report.set_company_code_input()
+    report.set_visit_date_input()
+    report.set_report_date_input()
+    report.set_status_input()
+    report.set_comment_input()
+
+    G.reports.append(report)
+    print("Report added")
+    report.print_data()
+    pause_terminal()
 
 
 def edit_visit_report():
     selected = select_visit_report()
+    if G.reports[selected].get_status().lower() == "d":
+        print("This report has been finalized")
+        pause_terminal()
+        return
+
+    print("1. Visit date"
+          "\n2. report date"
+          "\n3. Status"
+          "\n4. Comment"
+          "\n0. Cancel")
+
+    choice = input("\nEnter choice: ")
+    if not choice.isdigit() or not (0 < int(choice) <= 4):
+        print("Invalid choice")
+        pause_terminal()
+        edit_visit_report()
+        return
+
+    report = G.reports[selected]
+
+    if choice == "1":
+        report.set_visit_date_input()
+    elif choice == "2":
+        report.set_report_date_input()
+    elif choice == "3":
+        report.set_status_input()
+    elif choice == "4":
+        report.set_comment_input()
+    elif choice == "0":
+        return
+
+    print("Report updated")
+    report.print_data()
+    pause_terminal()
 
 
 def delete_visit_report():
@@ -414,6 +443,33 @@ def delete_visit_report():
         print("Report not deleted")
         pause_terminal()
         return
+
+
+def save():
+    if os.path.isfile(G.COMPANIES_PATH + ".bak"):
+        os.remove(G.COMPANIES_PATH + ".bak")
+    copyfile(G.COMPANIES_PATH, G.COMPANIES_PATH + ".bak")
+
+    if os.path.isfile(G.INSPECTORS_PATH + ".bak"):
+        os.remove(G.INSPECTORS_PATH + ".bak")
+    copyfile(G.INSPECTORS_PATH, G.INSPECTORS_PATH + ".bak")
+
+    # save inspectors
+    file = open(G.COMPANIES_PATH, 'w')
+    for company in G.companies:
+        save_val = company.save_str()
+        file.write(save_val)
+        file.write("\n")
+    file.close()
+
+    file = open(G.INSPECTORS_PATH, 'w')
+    for report in G.reports:
+        save_val = report.save_str()
+        file.write(save_val)
+        file.write("\n")
+    file.close()
+
+    exit(0)
 
 
 def main():
@@ -468,7 +524,7 @@ def main():
         ("Display data", display_data_menu),
         ("Measurement file", measurement_file_menu),
         ("Manage data", manage_data_menu),
-        ("Exit and save", lambda: exit(0))
+        ("Exit and save", save)
     ])
 
     main_menu.display()

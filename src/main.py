@@ -1,4 +1,3 @@
-import atexit
 import os
 
 import company as company_struct
@@ -16,24 +15,9 @@ def init():
     G.reports = report_struct.parse_reports(G.REPORTS_PATH)
 
 
-def save():
-    print("")
-    choice = input("Save changes? (y/n) ")
-    if choice.lower() == "y":
-        print("Saving...")
-    elif choice == "n":
-        return
-    else:
-        print("Invalid choice.")
-        save()
-        return
-
-
 def main():
     os.system("cls" if os.name == "nt" else "clear")
     init()
-
-    atexit.register(save)
 
     while main_menu_active:
         menu.main()

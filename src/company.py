@@ -39,6 +39,10 @@ def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
+def pause_terminal():
+    input("Press any key to continue...")
+
+
 class Company:
     def __init__(self, code: str, name: str, street: str, house_number: str, postal_code: str, city: str, x: str,
                  y: str, max_emissions: str, emissions: str, fine: str, check: str, check_freq: str,
@@ -69,12 +73,14 @@ class Company:
 
         code = input("Enter code: ")
         if not (len(code) <= 4):
-            print("Code must be 4 digits long")
+            print("Code max length is 4 digits")
+            pause_terminal()
             self.set_code_input()
             return
 
         if not code.isdigit():
             print("Code must be digits only")
+            pause_terminal()
             self.set_code_input()
             return
 
@@ -92,6 +98,7 @@ class Company:
         name = input("Enter name: ")
         if not (len(name) <= 20):
             print("Name max length is 20 characters long")
+            pause_terminal()
             self.set_name_input()
             return
 
@@ -109,6 +116,7 @@ class Company:
         street = input("Enter street: ")
         if not (len(street) <= 30):
             print("Street max length is 30 characters long")
+            pause_terminal()
             self.set_street_input()
             return
 
@@ -126,6 +134,7 @@ class Company:
         house_number = input("Enter house number: ")
         if not (len(house_number) <= 5):
             print("House number max length is 5 characters long")
+            pause_terminal()
             self.set_house_number_input()
             return
 
@@ -143,6 +152,7 @@ class Company:
         postal_code = input("Enter postal code: ")
         if not (len(postal_code) == 6 and postal_code[:4].isdigit() and postal_code[4:].isalpha()):
             print("Postal code must be in the format 'nnnncc'")
+            pause_terminal()
             self.set_postal_code_input()
             return
 
@@ -160,6 +170,7 @@ class Company:
         city = input("Enter city: ")
         if not (len(city) <= 20):
             print("City max length is 20 characters long")
+            pause_terminal()
             self.set_city_input()
             return
 
@@ -177,16 +188,19 @@ class Company:
         x = input("Enter x coordinate: ")
         if not (len(x) == 2):
             print("X coordinate must be 2 digits long")
+            pause_terminal()
             self.set_x_input()
             return
 
         if not x.isdigit():
             print("X coordinate must be digits only")
+            pause_terminal()
             self.set_x_input()
             return
 
         if int(x) > 99 or int(x) < 0:
             print("X coordinate must be between 0 and 99")
+            pause_terminal()
             self.set_x_input()
             return
 
@@ -204,16 +218,19 @@ class Company:
         y = input("Enter y coordinate: ")
         if not (len(y) == 2):
             print("Y coordinate must be 2 digits long")
+            pause_terminal()
             self.set_y_input()
             return
 
         if not y.isdigit():
             print("Y coordinate must be digits only")
+            pause_terminal()
             self.set_y_input()
             return
 
         if int(y) > 99 or int(y) < 0:
             print("Y coordinate must be between 0 and 99")
+            pause_terminal()
             self.set_y_input()
             return
 
@@ -231,11 +248,13 @@ class Company:
         max_emissions = input("Enter max emissions: ")
         if not (len(max_emissions) <= 10):
             print("Max emissions max length is 10 digits")
+            pause_terminal()
             self.set_max_emissions_input()
             return
 
         if not max_emissions.isdigit():
             print("Max emissions must be digits only")
+            pause_terminal()
             self.set_max_emissions_input()
             return
 
@@ -254,11 +273,13 @@ class Company:
         if emissions.strip():
             if not (len(emissions) <= 10):
                 print("Emissions max length is 10 digits")
+                pause_terminal()
                 self.set_emissions_input()
                 return
 
             if not emissions.isdigit():
                 print("Emissions must be digits only")
+                pause_terminal()
                 self.set_emissions_input()
                 return
 
@@ -279,11 +300,13 @@ class Company:
         if fine.strip():
             if not (len(fine) <= 8):
                 print("Fine max length is 10 digits")
+                pause_terminal()
                 self.set_fine_input()
                 return
 
             if not fine.isdigit():
                 print("Fine must be digits only")
+                pause_terminal()
                 self.set_fine_input()
                 return
 
@@ -300,19 +323,28 @@ class Company:
     def set_check_input(self):
         clear_terminal()
 
-        check = input("Enter check: ")
+        check = input("Enter check status (j for inspected, n for not inspected): ")
         check = check.lower()  # Convert input to lowercase for case-insensitive comparison
 
-        if self.__check == "j":
-            print("Check is already set to 'j' and cannot be changed.")
-            return
-
-        if check == "n":
-            self.__check = "j"
-        elif check == "j":
-            print("Check is already set to 'j' and cannot be changed.")
+        if check == "j":
+            if self.__check == "n":
+                self.__check = "j"
+                print("Check status updated to 'inspected'")
+                pause_terminal()
+            else:
+                print("Check status is already 'inspected' and cannot be changed")
+                pause_terminal()
+        elif check == "n":
+            if self.__check == "j":
+                print("Check status is already 'inspected' and cannot be changed to 'not inspected'")
+                pause_terminal()
+            else:
+                self.__check = "n"
+                print("Check status updated to 'not inspected'")
+                pause_terminal()
         else:
-            print("Check must be 'j' or 'n'")
+            print("Invalid input. Enter 'j' for inspected, 'n' for not inspected")
+            pause_terminal()
             self.set_check_input()
 
     def get_check_freq(self) -> int:
@@ -328,17 +360,20 @@ class Company:
         if check_freq.strip():
             if not (len(check_freq) <= 2):
                 print("Check frequency max length is 2 digits")
+                pause_terminal()
                 self.set_check_freq_input()
                 return
 
             if not check_freq.isdigit():
                 print("Check frequency must be digits only")
+                pause_terminal()
                 self.set_check_freq_input()
                 return
 
             check_freq_int = int(check_freq)
             if check_freq_int < 1 or check_freq_int > 12:
                 print("Check frequency must be between 1 and 12 (inclusive)")
+                pause_terminal()
                 self.set_check_freq_input()
                 return
 
@@ -359,6 +394,7 @@ class Company:
         if contact_person.strip():
             if not (len(contact_person) <= 30):
                 print("Contact person max length is 30 characters long")
+                pause_terminal()
                 self.set_contact_person_input()
                 return
 
@@ -390,6 +426,25 @@ class Company:
 
         self.__fine = round(abs(emissions_left) * FINE_AMOUNT)
         return self.__fine
+
+    def save_str(self) -> str:
+        code = str(self.__code)[:4].zfill(4)
+        name = self.__name[:20].ljust(20)
+        street = self.__street[:30].ljust(30)
+        house_number = str(self.__house_number)[:5].ljust(5)
+        postal_code = str(self.__postal_code)[:6].ljust(6)
+        city = self.__city[:20].ljust(20)
+        x = str(self.__x)[:2].zfill(2)
+        y = str(self.__y)[:2].zfill(2)
+        max_emissions = str(self.__max_emissions)[:10].ljust(10)
+        emissions = str(self.__emissions)[:10].ljust(10)
+        fine = str(self.__fine)[:8].ljust(8)
+        check = str(self.__check)[:1].ljust(1)
+        check_freq = str(self.__check_freq)[:2].ljust(2)
+        contact_person = self.__contact_person[:20].ljust(20)
+
+        save = f"{code}{name}{street}{house_number}{postal_code}{city}{x}{y}{max_emissions}{emissions}{fine}{check}{check_freq}{contact_person}"
+        return save
 
 
 def create_empty_company() -> Company:
