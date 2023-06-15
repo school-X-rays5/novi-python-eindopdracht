@@ -173,7 +173,7 @@ def print_above_average_unknown_gas_concentration():
 
 
 def print_high_unknown_gas_concentration():
-    gasses.get_high_unknown_gas_concentration(G.loaded_measurement).print_data()
+    gasses.get_high_unknown_gas_concentration(G.loaded_measurement, gasses.get_company_areas()).print_data()
     pause_terminal()
 
 
