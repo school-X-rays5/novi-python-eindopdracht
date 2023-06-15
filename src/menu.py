@@ -296,7 +296,10 @@ def edit_company():
           "\n0. Cancel")
 
     choice = input("\nEnter choice: ")
-    if not choice.isdigit() or not (0 < int(choice) <= 11):
+    if choice == "0":
+        return
+    
+    if not choice.isdigit() or not (1 < int(choice) and int(choice) <= 11):
         print("Invalid choice")
         pause_terminal()
         edit_company()
@@ -324,8 +327,6 @@ def edit_company():
         company.set_check_freq_input()
     elif choice == "10":
         company.set_contact_person_input()
-    elif choice == "0":
-        return
 
     print("Company updated")
     company.print_data()
@@ -354,7 +355,7 @@ def select_visit_report() -> int:
 
     for i, report in enumerate(G.reports):
         date_formatted = datetime.strptime(report.get_visit_date(), "%Y%m%d")
-        print_str = f"{i + 1}. Company code: {report.get_company_code()}, Inspector code: {report.get_inspector_code()}, Visit date: {date_formatted}"
+        print_str = f"{i + 1}. Company code: {report.get_company_code()}, Inspector code: {report.get_inspector_code()}, Visit date: {date_formatted}, Status: {report.get_status()}"
         if report.get_company_code() not in company_list:
             company_list[report.get_company_code()] = []
 

@@ -416,7 +416,8 @@ class Company:
         print(f"Fine: {self.__fine}", end=", ")
         print(f"Check: {self.__check.strip()}", end=", ")
         print(f"Check Frequency: {self.__check_freq}", end=", ")
-        print(f"Contact Person: {self.__contact_person.strip()}")
+        print(f"Contact Person: {self.__contact_person.strip() if self.__contact_person is not None else None}")
+
 
     def set_fine_from_loaded_measurements(self) -> int:
         self.__emissions = calculate_total_emissions(self.__x, self.__y)
@@ -426,6 +427,7 @@ class Company:
 
         self.__fine = round(abs(emissions_left) * FINE_AMOUNT)
         return self.__fine
+
 
     def save_str(self) -> str:
         code = str(self.__code)[:4].zfill(4)
