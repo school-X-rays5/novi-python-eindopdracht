@@ -135,14 +135,14 @@ def load_measurement_file():
     if not os.path.isfile(path) or not path.endswith(".csv"):
         print("Invalid file")
         pause_terminal()
-        load_measurement_file()
-        return
+        return None
 
     try:
         G.loaded_measurement = gasses.LoadGasses(path)
     except ValueError:
         print("Invalid file contents")
-        load_measurement_file()
+        pause_terminal()
+        return None
 
 
 def plot_gas(idx: int):
@@ -235,7 +235,8 @@ def select_company_from_name() -> int:
 def select_company() -> int:
     clear_terminal()
     print("1. Search company by x, y"
-          "\n2. Search company by name")
+          "\n2. Search company by name"
+          "\n0. Go back")
 
     choice = input("\nEnter choice: ")
     if choice.isdigit() and (0 > int(choice) and int(choice) <= 3):
@@ -298,7 +299,7 @@ def edit_company():
     choice = input("\nEnter choice: ")
     if choice == "0":
         return
-    
+
     if not choice.isdigit() or not (1 < int(choice) and int(choice) <= 11):
         print("Invalid choice")
         pause_terminal()
@@ -335,8 +336,12 @@ def edit_company():
 
 def delete_company():
     choice = select_company()
+    if choice == -1:
+        return
 
-    should_delete = input("\nAre you sure you want to delete this company? (y/N): ")
+    company = G.companies[int(choice)]
+
+    should_delete = input(f"\nAre you sure you want to delete {company.get_name().strip()}? (y/N): ")
     if should_delete.lower() == "y":
         del G.companies[int(choice)]
         print("Company deleted")
@@ -433,8 +438,9 @@ def edit_visit_report():
 
 def delete_visit_report():
     choice = select_visit_report()
+    report = G.reports[int(choice)]
 
-    should_delete = input("\nAre you sure you want to delete this report? (y/N): ")
+    should_delete = input(f"\nAre you sure you want to delete report with id {report.get_code()}? (y/N): ")
     if should_delete.lower() == "y":
         del G.reports[int(choice)]
         print("Report deleted")

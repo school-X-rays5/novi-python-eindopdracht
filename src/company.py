@@ -418,16 +418,14 @@ class Company:
         print(f"Check Frequency: {self.__check_freq}", end=", ")
         print(f"Contact Person: {self.__contact_person.strip() if self.__contact_person is not None else None}")
 
-
     def set_fine_from_loaded_measurements(self) -> int:
-        self.__emissions = calculate_total_emissions(self.__x, self.__y)
+        self.__emissions = round(calculate_total_emissions(self.__x, self.__y))
         emissions_left = self.__max_emissions - self.__emissions
         if not (emissions_left < 0):
             return 0
 
         self.__fine = round(abs(emissions_left) * FINE_AMOUNT)
         return self.__fine
-
 
     def save_str(self) -> str:
         code = str(self.__code)[:4].zfill(4)

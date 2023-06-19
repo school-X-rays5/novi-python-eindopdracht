@@ -107,12 +107,12 @@ class Report:
         check = check.lower()  # Convert input to lowercase for case-insensitive comparison
 
         if check == "d":
-            self.__status = "finalized"
+            self.__status = "d"
             return
-        elif check == "v" and not (self.__status == "finalized"):
-            self.__status = "temporary"
+        elif check == "v" and not (self.__status == "d"):
+            self.__status = "v"
             return
-        elif not (self.__status == "finalized"):
+        elif not (self.__status == "d"):
             self.__status = ""
         else:
             print("Invalid input")

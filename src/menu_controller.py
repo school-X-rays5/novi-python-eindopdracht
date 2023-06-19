@@ -1,5 +1,7 @@
 import os
 
+import globals as G
+
 
 class Menu:
     def __init__(self, title: str, options: list[tuple[str, any]], enter_action=None):
@@ -18,8 +20,13 @@ class Menu:
             for index, option in enumerate(self.options):
                 print(f"{index + 1}. {option[0]}")
 
+            # Doing actions based on the title isn't the best way to do this, but it's the only way with this menu method.
             if self.title != "Main Menu":
                 print("0. Go Back")
+
+            if self.title == "Measurement file":
+                if G.loaded_measurement is None:
+                    return
 
             choice = input("\nEnter your choice: ")
 
