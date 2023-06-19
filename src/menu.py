@@ -204,7 +204,7 @@ def select_company_from_xy() -> int:
     for company in G.companies:
         company_locations.append(coordinate.Coordinate(company.get_x(), company.get_y()))
 
-    nearest = coordinate.get_nearest_coordinate(int(x), int(y), company_locations)
+    nearest = coordinate.get_nearest_company(int(x), int(y), company_locations)
     if nearest is None:
         print("No company found")
         pause_terminal()

@@ -75,17 +75,17 @@ def get_distance(x1: int, y1: int, x2: int, y2: int) -> float:
     return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
-def get_nearest_coordinate(x: int, y: int, coordinate_list: list[Coordinate]) -> None | Coordinate:
+def get_nearest_company(x: int, y: int, coordinate_list: list[Coordinate]) -> None | Coordinate:
     if not coordinate_list:
         return None
 
-    nearest_coordinate = coordinate_list[0]
-    min_distance = get_distance(x, y, nearest_coordinate.get_x(), nearest_coordinate.get_y())
+    nearest_company = None
+    min_distance = float('inf')
 
-    for coordinate in coordinate_list[1:]:
+    for coordinate in coordinate_list:
         distance = get_distance(x, y, coordinate.get_x(), coordinate.get_y())
         if distance < min_distance:
             min_distance = distance
-            nearest_coordinate = coordinate
+            nearest_company = coordinate
 
-    return nearest_coordinate
+    return nearest_company
