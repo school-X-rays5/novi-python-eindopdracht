@@ -56,7 +56,7 @@ class GasConcentration:
             f"x: {self.__x}, y: {self.__y}, co2: {self.__co2}, ch4: {self.__ch4}, no2: {self.__no2}, nh3: {self.__nh3}, co2 equivalent: {self.__weighted_emissions}")
 
 
-def LoadGasses(file_path) -> np.ndarray:
+def load_gasses(file_path) -> np.ndarray:
     try:
         return np.loadtxt(file_path, delimiter=',', skiprows=1)
     except FileNotFoundError:
@@ -112,7 +112,8 @@ def get_high_unknown_gas_concentration(gasses_arr: np.ndarray, company_areas):
 
 def get_above_average_unknown_gas_concentrations(gasses_arr: np.ndarray):
     company_areas = get_company_areas()
-    average = calculate_average_weighted_emissions(gasses_arr) + 100  # add a small amount to avoid false positives
+    average = calculate_average_weighted_emissions(gasses_arr)
+    average += average / 10  # Add a small amount to avoid false positives
     found_items = []
 
     while True:

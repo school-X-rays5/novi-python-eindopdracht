@@ -145,6 +145,8 @@ class Report:
         print(f"Comment: {self.__comment.strip()}")
 
     def save_str(self) -> str:
+        # Save using zfill and ljust for correct padding
+
         inspector_code = str(self.__inspector_code)[:3].zfill(3)
         company_code = str(self.__company_code)[:4].zfill(4)
         visit_date = self.__visit_date[:8].ljust(8)

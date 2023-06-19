@@ -1,4 +1,4 @@
-import os
+﻿import os
 
 import coordinate
 import gasses
@@ -12,7 +12,6 @@ def calculate_total_emissions(x, y):
     class_2_emissions = 0  # 50%
     class_3_emissions = 0  # 25%
 
-    class_1_xy_list = [coordinate.Coordinate(x, y)]
     class_2_xy_list = coordinate.get_outside_coordinates(coordinate.get_area_around_coordinate(x, y, 1))
     class_3_xy_list = coordinate.get_outside_coordinates(coordinate.get_area_around_coordinate(x, y, 2))
 
@@ -25,7 +24,7 @@ def calculate_total_emissions(x, y):
         nh4 = row[5]
 
         if row_x == x and row_y == y:
-            class_1_emissions += gasses.calculate_weighted_emissions(co2, ch4, no2, nh4)
+            class_1_emissions = gasses.calculate_weighted_emissions(co2, ch4, no2, nh4)
         elif coordinate.is_coordinate_in_list(row_x, row_y, class_2_xy_list):
             class_2_emissions += gasses.calculate_weighted_emissions(co2, ch4, no2, nh4) * 0.5
         elif coordinate.is_coordinate_in_list(row_x, row_y, class_3_xy_list):
@@ -428,6 +427,8 @@ class Company:
         return self.__fine
 
     def save_str(self) -> str:
+        # Use zfill and ljust to align the output correctly
+
         code = str(self.__code)[:4].zfill(4)
         name = self.__name[:20].ljust(20)
         street = self.__street[:30].ljust(30)

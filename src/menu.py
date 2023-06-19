@@ -50,7 +50,6 @@ def print_data(data: Union[list[company_struct], list[inspector_struct], list[re
 def get_date_range_input() -> None | tuple[datetime, datetime] | tuple[None, None] | tuple[
     datetime | None, datetime | None]:
     begin_date = input("Enter begin date (yyyy-mm-dd) (leave blank to skip): ")
-    end_date = ""
     if begin_date:
         end_date = input("Enter end date (yyyy-mm-dd): ")
         if not end_date:
@@ -83,13 +82,13 @@ def print_reports_per_inspector():
         print_reports_per_inspector()
         return
 
-    begin, end = None, None
     while True:
         result = get_date_range_input()
         if not (result is None):
             begin, end = result
             break
 
+    # Print reports filtered by date and inspector
     for report in G.reports:
         if report.get_inspector_code() == inspector_code:
             visit_date = datetime.strptime(report.get_visit_date(), "%Y%m%d")
@@ -111,13 +110,13 @@ def print_reports_per_company():
         print_reports_per_company()
         return
 
-    begin, end = None, None
     while True:
         result = get_date_range_input()
         if not (result is None):
             begin, end = result
             break
 
+    # Print reports filtered by date and company
     for report in G.reports:
         if report.get_company_code() == company_code:
             visit_date = datetime.strptime(report.get_visit_date(), "%Y%m%d")
@@ -138,7 +137,7 @@ def load_measurement_file():
         return None
 
     try:
-        G.loaded_measurement = gasses.LoadGasses(path)
+        G.loaded_measurement = gasses.load_gasses(path)
     except ValueError:
         print("Invalid file contents")
         pause_terminal()
@@ -358,6 +357,7 @@ def select_visit_report() -> int:
 
     company_list = {}
 
+    # Group all reports by company
     for i, report in enumerate(G.reports):
         date_formatted = datetime.strptime(report.get_visit_date(), "%Y%m%d")
         print_str = f"{i + 1}. Company code: {report.get_company_code()}, Inspector code: {report.get_inspector_code()}, Visit date: {date_formatted}, Status: {report.get_status()}"
@@ -453,6 +453,7 @@ def delete_visit_report():
 
 
 def save():
+    # Create backups
     if os.path.isfile(G.COMPANIES_PATH + ".bak"):
         os.remove(G.COMPANIES_PATH + ".bak")
     copyfile(G.COMPANIES_PATH, G.COMPANIES_PATH + ".bak")
@@ -461,7 +462,7 @@ def save():
         os.remove(G.REPORTS_PATH + ".bak")
     copyfile(G.REPORTS_PATH, G.REPORTS_PATH + ".bak")
 
-    # save inspectors
+    # Save companies
     file = open(G.COMPANIES_PATH, 'w')
     for company in G.companies:
         save_val = company.save_str()
@@ -469,6 +470,7 @@ def save():
         file.write("\n")
     file.close()
 
+    # Save reports
     file = open(G.REPORTS_PATH, 'w')
     for report in G.reports:
         save_val = report.save_str()

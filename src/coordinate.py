@@ -59,18 +59,6 @@ def is_coordinate_in_list(x, y, coordinate_list):
     return False
 
 
-def get_surrounding_coordinates(x, y):
-    surrounding_coordinates = []
-
-    for dx in [-1, 0, 1]:
-        for dy in [-1, 0, 1]:
-            if dx == 0 and dy == 0:
-                continue
-            surrounding_coordinates.append((x + dx, y + dy))
-
-    return surrounding_coordinates
-
-
 def get_distance(x1: int, y1: int, x2: int, y2: int) -> float:
     return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
