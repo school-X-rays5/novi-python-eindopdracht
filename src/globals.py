@@ -11,4 +11,4 @@ inspectors = list[Any]
 REPORTS_PATH = "input/reports.txt"
 reports = list[Any]
 
-loaded_measurement: None | np.ndarray = None
+loaded_measurement: np.ndarray = None

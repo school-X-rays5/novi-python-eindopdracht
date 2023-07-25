@@ -23,6 +23,7 @@ def calculate_total_emissions(x, y):
         no2 = row[4]
         nh4 = row[5]
 
+
         if row_x == x and row_y == y:
             class_1_emissions = gasses.calculate_weighted_emissions(co2, ch4, no2, nh4)
         elif coordinate.is_coordinate_in_list(row_x, row_y, class_2_xy_list):
@@ -470,7 +471,7 @@ def parse_companies(file_path) -> list[Company]:
     return companies
 
 
-def from_xy(x, y) -> None | int:
+def from_xy(x, y) -> int:
     for i, company in enumerate(G.companies):
         if company.get_x() == x and company.get_y() == y:
             return i

@@ -63,7 +63,7 @@ def get_distance(x1: int, y1: int, x2: int, y2: int) -> float:
     return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
-def get_nearest_company(x: int, y: int, coordinate_list: list[Coordinate]) -> None | Coordinate:
+def get_nearest_company(x: int, y: int, coordinate_list: list[Coordinate]) -> Coordinate:
     if not coordinate_list:
         return None
 

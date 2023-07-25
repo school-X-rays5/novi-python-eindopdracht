@@ -47,8 +47,7 @@ def print_data(data: Union[list[company_struct], list[inspector_struct], list[re
     pause_terminal()
 
 
-def get_date_range_input() -> None | tuple[datetime, datetime] | tuple[None, None] | tuple[
-    datetime | None, datetime | None]:
+def get_date_range_input() -> tuple[datetime, datetime]:
     begin_date = input("Enter begin date (yyyy-mm-dd) (leave blank to skip): ")
     if begin_date:
         end_date = input("Enter end date (yyyy-mm-dd): ")
@@ -58,8 +57,8 @@ def get_date_range_input() -> None | tuple[datetime, datetime] | tuple[None, Non
     else:
         return None, None
 
-    begin: None | datetime = None
-    end: None | datetime = None
+    begin: datetime = None
+    end: datetime = None
     try:
         if begin_date:
             begin = datetime.strptime(begin_date, "%Y-%m-%d")
