@@ -1,6 +1,0 @@
-0001Shell               Van Leeuwenhoeklaan           2    2713RBZoetermeer          020230000                       j01Ben van Beurden     .
-0002ASML                High Tech Campus              44   5656AEEindhoven           1422100000                      n                      .
-0003Tata Steel          Wenckebachstraat              1    1951JZVelsen-Noord        281120000                       j03Henrik Adam         .
-0004Dow Chemical        Herbert H. Dowweg             5    4542NMHoek                445540000                       j02Herbert Henry Dow   .
-0005Philips             Amstelplein                   2    1096BCAmsterdam           7090100000                      n                      .
-0006TNO                 Stieltjesweg                  1    2628CKDelft               802060000                       n                      .
