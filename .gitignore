@@ -1,5 +1,5 @@
 **/~$*.docx
 **/.$*.bkp
-**/.&*.bak
-.venv
+**/*.bak
+venv
 __pycache__
