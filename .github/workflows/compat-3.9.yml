@@ -25,7 +25,7 @@ jobs:
       run: choco install llvm
         
     - name: Build test host
-      run: clang++ -o test_host test_python_39/test.cpp
+      run: clang++ -o test_host.exe test_python_39/test.cpp
       
     - name: Run RUN.BAT
       run: ./test_host.exe
