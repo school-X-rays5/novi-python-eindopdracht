@@ -1,15 +1,15 @@
-00100012019030120190401dalles in orde                                                                                       
-00300012020030320200406dgeen bijzonderheden                                                                                 
-00200042020030620200707dgeen bijzonderheden                                                                                 
-00100032020050220200606dgevaarlijk hoge uitstoot                                                                            
-00300042020083020200920dalles in orde                                                                                       
-00500032020090120201027dgeen bijzonderheden                                                                                 
-00400032021010220210112dgasfilters verouderd                                                                                
-00200012021030220210404vonveilige raffinaderij apparatuur                                                                   
-005000420210308                                                                                                             
-00200032021050420210606dgeen bijzonderheden                                                                                 
-00100032021090320210912valles in orde                                                                                       
-00300042021090520211111vgeen bijzonderheden                                                                                 
-004000320220104                                                                                                             
-005000420220301                                                                                                             
-002000120220202                                                                                                             
+001 0001 01-03-2019 01-04-2019 definitief alles in orde                                                                                       .
+003 0001 03-03-2020 06-04-2020 definitief geen bijzonderheden                                                                                 .
+002 0004 06-03-2020 07-07-2020 definitief geen bijzonderheden                                                                                 .
+001 0003 02-05-2020 06-06-2020 definitief gevaarlijk hoge uitstoot                                                                            .
+003 0004 30-08-2020 20-09-2020 definitief alles in orde                                                                                       .
+005 0003 01-09-2020 27-10-2020 definitief geen bijzonderheden                                                                                 .
+004 0003 02-01-2021 12-01-2021 definitief gasfilters verouderd                                                                                .
+002 0001 02-03-2021 04-04-2021 voorlopig  onveilige raffinaderij apparatuur                                                                   .
+005 0004 08-03-2021                                                                                                                           .
+002 0003 04-05-2021 06-06-2021 definitief geen bijzonderheden                                                                                 .
+001 0003 03-09-2021 12-09-2021 voorlopig  alles in orde                                                                                       .
+003 0004 05-09-2021 11-11-2021 voorlopig  geen bijzonderheden                                                                                 .
+004 0003 04-01-2022                                                                                                                           .
+005 0004 01-03-2022                                                                                                                           .
+002 0001 02-02-2022                                                                                                                           .

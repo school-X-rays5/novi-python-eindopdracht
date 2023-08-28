@@ -1,3 +1,6 @@
+import util
+
+
 class Inspector:
     def __init__(self, code: int, name: str, place: str):
         self.__code = code
@@ -24,10 +27,18 @@ def parse_inspectors(file_path) -> list[Inspector]:
     lines = file.readlines()
     file.close()
 
+    # idx 0: code
+    # idx 1: name
+    # idx 2: place
+    indices = [0, 4, 24, 44]
+
     inspectors = []
     for line in lines:
+        values = [line[i:j] for i, j in zip(indices[:-1], indices[1:])]
+        values = [value.strip() for value in values]
+
         try:
-            inspectors.append(Inspector(int(line[0:3]), line[3:23].strip(), line[23:43].strip()))
+            inspectors.append(Inspector(util.str_int_safe(values[0]), values[1], values[2]))
         except ValueError:
             print("Invalid inspector data:", line)
 

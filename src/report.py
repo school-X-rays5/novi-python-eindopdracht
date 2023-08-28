@@ -1,6 +1,8 @@
 import os
 from datetime import datetime
 
+import util
+
 
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -74,9 +76,9 @@ class Report:
     def set_visit_date_input(self):
         clear_terminal()
 
-        date = input("Enter visit date (YYYY-MM-DD): ")
+        date = input("Enter visit date (dd-mm-yyyy): ")
         if not (len(date) == 10):
-            print("Visit date must be in the format YYYY-MM-DD")
+            print("Visit date must be in the format dd-mm-yyyy")
             self.set_visit_date_input()
             return
 
@@ -88,9 +90,9 @@ class Report:
     def set_report_date_input(self):
         clear_terminal()
 
-        date = input("Enter report date (YYYY-MM-DD, optional): ")
+        date = input("Enter report date (dd-mm-yyyy, optional): ")
         if date and not (len(date) == 10):
-            print("Report date must be in the format YYYY-MM-DD")
+            print("Report date must be in the format dd-mm-yyyy")
             self.set_report_date_input()
             return
 
@@ -134,8 +136,8 @@ class Report:
         self.__comment = comment
 
     def print_data(self) -> None:
-        visit_date = datetime.strptime(self.__visit_date.strip(), "%Y%m%d")
-        report_date = datetime.strptime(self.__report_date.strip(), "%Y%m%d") if self.__report_date.strip() else None
+        visit_date = datetime.strptime(self.__visit_date.strip(), "%d-%m-%Y")
+        report_date = datetime.strptime(self.__report_date.strip(), "%d-%m-%Y") if self.__report_date.strip() else None
 
         print(f"Inspector Code: {self.__inspector_code}", end=", ")
         print(f"Company Code: {self.__company_code}", end=", ")
@@ -163,12 +165,27 @@ def parse_reports(file_path) -> list[Report]:
     lines = file.readlines()
     file.close()
 
+    # idx 0: inspector code
+    # idx 1: company code
+    # idx 2: visit date
+    # idx 3: report date
+    # idx 4: status
+    # idx 5: comment
+    indices = [0, 4, 9, 20, 31, 42, 142]
+
     reports = []
     for line in lines:
+        values = [line[i:j] for i, j in zip(indices[:-1], indices[1:])]
+        values = [value.strip() for value in values]
+
         try:
-            reports.append(Report(int(line[0:3]), int(line[3:7]), line[7:15], line[15:23], line[23:24], line[24:124]))
+            reports.append(Report(util.str_int_safe(values[0]), util.str_int_safe(values[1]), values[2], values[3],
+                                  values[4], values[5]))
         except ValueError:
             print("Invalid report data:", line)
+
+    # sort based on visit date
+    reports.sort(key=lambda x: x.get_visit_date())
 
     return reports
 

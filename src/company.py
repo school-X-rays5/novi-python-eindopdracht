@@ -3,6 +3,7 @@
 import coordinate
 import gasses
 import globals as G
+import util
 
 FINE_AMOUNT = 1000
 
@@ -22,7 +23,6 @@ def calculate_total_emissions(x, y):
         ch4 = row[3]
         no2 = row[4]
         nh4 = row[5]
-
 
         if row_x == x and row_y == y:
             class_1_emissions = gasses.calculate_weighted_emissions(co2, ch4, no2, nh4)
@@ -47,19 +47,19 @@ class Company:
     def __init__(self, code: str, name: str, street: str, house_number: str, postal_code: str, city: str, x: str,
                  y: str, max_emissions: str, emissions: str, fine: str, check: str, check_freq: str,
                  contact_person: str):
-        self.__code = int(code)
+        self.__code = util.str_int_safe(code)
         self.__name = name
         self.__street = street
         self.__house_number = house_number
         self.__postal_code = postal_code
         self.__city = city
-        self.__x = int(x)
-        self.__y = int(y)
-        self.__max_emissions = int(max_emissions)
-        self.__emissions = int(emissions) if emissions.strip() else 0
-        self.__fine = int(fine) if fine.strip() else 0
+        self.__x = util.str_int_safe(x)
+        self.__y = util.str_int_safe(y)
+        self.__max_emissions = util.str_int_safe(max_emissions)
+        self.__emissions = util.str_int_safe(emissions) if emissions.strip() else 0
+        self.__fine = util.str_int_safe(fine) if fine.strip() else 0
         self.__check = check
-        self.__check_freq = int(check_freq) if check_freq.strip() else 0
+        self.__check_freq = util.str_int_safe(check_freq) if check_freq.strip() else 0
         self.__contact_person = contact_person if contact_person.strip() else ""
 
     def get_code(self) -> int:
@@ -84,7 +84,7 @@ class Company:
             self.set_code_input()
             return
 
-        self.__code = int(code)
+        self.__code = util.str_int_safe(code)
 
     def get_name(self) -> str:
         return self.__name
@@ -198,13 +198,13 @@ class Company:
             self.set_x_input()
             return
 
-        if int(x) > 99 or int(x) < 0:
+        if util.str_int_safe(x) > 99 or util.str_int_safe(x) < 0:
             print("X coordinate must be between 0 and 99")
             pause_terminal()
             self.set_x_input()
             return
 
-        self.__x = int(x)
+        self.__x = util.str_int_safe(x)
 
     def get_y(self) -> int:
         return self.__y
@@ -228,13 +228,13 @@ class Company:
             self.set_y_input()
             return
 
-        if int(y) > 99 or int(y) < 0:
+        if util.str_int_safe(y) > 99 or util.str_int_safe(y) < 0:
             print("Y coordinate must be between 0 and 99")
             pause_terminal()
             self.set_y_input()
             return
 
-        self.__y = int(y)
+        self.__y = util.str_int_safe(y)
 
     def get_max_emissions(self) -> int:
         return self.__max_emissions
@@ -258,7 +258,7 @@ class Company:
             self.set_max_emissions_input()
             return
 
-        self.__max_emissions = int(max_emissions)
+        self.__max_emissions = util.str_int_safe(max_emissions)
 
     def get_emissions(self) -> int:
         return self.__emissions
@@ -283,7 +283,7 @@ class Company:
                 self.set_emissions_input()
                 return
 
-            self.__emissions = int(emissions)
+            self.__emissions = util.str_int_safe(emissions)
         else:
             self.__emissions = None
 
@@ -310,7 +310,7 @@ class Company:
                 self.set_fine_input()
                 return
 
-            self.__fine = int(fine)
+            self.__fine = util.str_int_safe(fine)
         else:
             self.__fine = None
 
@@ -370,7 +370,7 @@ class Company:
                 self.set_check_freq_input()
                 return
 
-            check_freq_int = int(check_freq)
+            check_freq_int = util.str_int_safe(check_freq)
             if check_freq_int < 1 or check_freq_int > 12:
                 print("Check frequency must be between 1 and 12 (inclusive)")
                 pause_terminal()
@@ -458,15 +458,35 @@ def parse_companies(file_path) -> list[Company]:
     lines = file.readlines()
     file.close()
 
+    # idx 0: code
+    # idx 1: name
+    # idx 2: street
+    # idx 3: house number
+    # idx 4: postal code
+    # idx 5: city
+    # idx 6: x
+    # idx 7: y
+    # idx 8: max emissions
+    # idx 9: emissions
+    # idx 10: fine
+    # idx 11: check
+    # idx 12: check freq
+    # idx 13: contact person
+    indices = [0, 5, 25, 55, 59, 67, 87, 90, 93, 108, 123, 135, 139, 142, 162]
+
     companies = []
     for line in lines:
+        values = [line[i:j] for i, j in zip(indices[:-1], indices[1:])]
+        values = [value.strip() for value in values]
+
         try:
             companies.append(
-                Company(line[0:4], line[4:24], line[24:54], line[54:59], line[59:65], line[65:85], line[85:87],
-                        line[87:89], line[89:99], line[99:109], line[109:117], line[117:118], line[118:120],
-                        line[120:140]))
-        except ValueError:
-            print("Invalid company data:", line)
+                Company(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7],
+                        values[8],
+                        values[9], values[10], values[11], values[12], values[13])
+            )
+        except ValueError as err:
+            print("Invalid company data:", line, err)
 
     return companies
 
@@ -477,3 +497,11 @@ def from_xy(x, y) -> int:
             return i
 
     return None
+
+
+def from_code(code) -> Company:
+    for i, company in enumerate(G.companies):
+        if company.get_code() == code:
+            return company
+
+    return create_empty_company()

@@ -1,5 +1,5 @@
-001Piet Precies        Leiden              .
-002Bob de Bouwer       Delft               .
-003Jan Groen           Amsterdam           .
-004Sarah Secuur        Utrecht             .
-005Lisa Losjes         Groningen           .
+001 Piet Precies        Leiden              .
+002 Bob de Bouwer       Delft               .
+003 Jan Groen           Amsterdam           .
+004 Sarah Secuur        Utrecht             .
+005 Lisa Losjes         Groningen           .
