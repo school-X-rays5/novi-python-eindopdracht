@@ -454,7 +454,12 @@ def create_empty_company() -> Company:
 
 
 def parse_companies(file_path) -> list[Company]:
-    file = open(file_path, 'r')
+    try:
+        file = open(file_path, 'r')
+    except FileNotFoundError:
+        print("The file with company data couldn't be found: ", file_path)
+        exit(1)
+    
     lines = file.readlines()
     file.close()
 

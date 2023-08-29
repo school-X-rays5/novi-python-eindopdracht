@@ -161,7 +161,12 @@ class Report:
 
 
 def parse_reports(file_path) -> list[Report]:
-    file = open(file_path, 'r')
+    try:
+        file = open(file_path, 'r')
+    except FileNotFoundError:
+        print("The file with report data couldn't be found: ", file_path)
+        exit(1)
+        
     lines = file.readlines()
     file.close()
 

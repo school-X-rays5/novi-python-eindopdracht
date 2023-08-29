@@ -4,3 +4,4 @@ cls
 pip install -r requirements.txt
 cls
 py src/main.py
+pause

@@ -23,7 +23,12 @@ class Inspector:
 
 
 def parse_inspectors(file_path) -> list[Inspector]:
-    file = open(file_path, 'r')
+    try:
+        file = open(file_path, 'r')
+    except FileNotFoundError:
+        print("The file with inspector data couldn't be found: ", file_path)
+        exit(1)
+        
     lines = file.readlines()
     file.close()
 
