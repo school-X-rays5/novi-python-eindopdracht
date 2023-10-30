@@ -28,9 +28,9 @@ def print_data(data: Union[list[company_struct], list[inspector_struct], list[re
 
 
 def get_date_range_input() -> tuple[datetime, datetime]:
-    begin_date = input("Enter begin date (dd-mm-yyyy) (leave blank to skip): ")
+    begin_date = input("Enter begin date (yyyy-mm-dd) (leave blank to skip): ")
     if begin_date:
-        end_date = input("Enter end date (dd-mm-yyyy): ")
+        end_date = input("Enter end date (yyyy-mm-dd): ")
         if not end_date:
             print("End date is required when begin date is provided.")
             return get_date_range_input()
@@ -45,8 +45,6 @@ def get_date_range_input() -> tuple[datetime, datetime]:
             end = datetime.strptime(end_date, "%Y-%m-%d")
     except ValueError:
         print("Invalid date")
-        pause_terminal()
-
         return None
 
     return begin, end
@@ -133,16 +131,16 @@ def print_reports_per_company_name():
 
 
 def load_measurement_file():
-    path = input("Path to measurement file: ")
-    if not os.path.isfile(path) or not path.endswith(".csv"):
-        print("Invalid file")
+    path = G.MEASURUREMENTS_PATH
+    if not os.path.isfile(path):
+        print("gasses.csv doesn't exist")
         pause_terminal()
         return None
 
     try:
         G.loaded_measurement = gasses.load_gasses(path)
     except ValueError:
-        print("Invalid file contents")
+        print("gasses.csv contents are invalid")
         pause_terminal()
         return None
 
@@ -211,8 +209,7 @@ def main():
         ("Highest unknown", print_high_unknown_gas_concentration)
     ])
 
-    measurement_file_menu = menu_controller.Menu("Measurement file", [
-        ("Load other measurement file", load_measurement_file),
+    measurement_file_menu = menu_controller.Menu("gasses.csv measurements", [
         ("Plot data", plot_measurement_data_menu),
         ("Find high gas concentration", high_gas_concentration_menu),
         ("Calculate fines", show_company_fines)
@@ -220,7 +217,7 @@ def main():
 
     main_menu = menu_controller.Menu("Main Menu", [
         ("Display data", display_data_menu),
-        ("Measurement file", measurement_file_menu),
+        ("gasses.csv measurements", measurement_file_menu),
         ("Exit", lambda: [exit(0)])
     ])
 

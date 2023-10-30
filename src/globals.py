@@ -11,4 +11,5 @@ inspectors = list[Any]
 REPORTS_PATH = "input/reports.txt"
 reports = list[Any]
 
+MEASURUREMENTS_PATH = "input/gasses.csv"
 loaded_measurement: np.ndarray = None

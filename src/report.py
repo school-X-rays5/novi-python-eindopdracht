@@ -76,13 +76,14 @@ class Report:
     def set_visit_date_input(self):
         clear_terminal()
 
-        date = input("Enter visit date (dd-mm-yyyy): ")
-        if not (len(date) == 10):
-            print("Visit date must be in the format dd-mm-yyyy")
+        date = input("Enter visit date (yyyy-mm-dd): ")
+        try:
+            parsed_date = datetime.strptime(date, "%Y-%m-%d")
+            formatted_date = parsed_date.strftime("%d-%m-%Y")
+            self.__visit_date = formatted_date
+        except ValueError:
+            print("Visit date must be in the format yyyy-mm-dd")
             self.set_visit_date_input()
-            return
-
-        self.__visit_date = date.replace("-", "")
 
     def get_report_date(self) -> str:
         return self.__report_date
@@ -90,14 +91,15 @@ class Report:
     def set_report_date_input(self):
         clear_terminal()
 
-        date = input("Enter report date (dd-mm-yyyy, optional): ")
-        if date and not (len(date) == 10):
-            print("Report date must be in the format dd-mm-yyyy")
-            self.set_report_date_input()
-            return
-
+        date = input("Enter report date (yyyy-mm-dd, optional): ")
         if date:
-            self.__report_date = date.replace("-", "")
+            try:
+                parsed_date = datetime.strptime(date, "%Y-%m-%d")
+                formatted_date = parsed_date.strftime("%d-%m-%Y")
+                self.__report_date = formatted_date
+            except ValueError:
+                print("Report date must be in the format yyyy-mm-dd")
+                self.set_report_date_input()
 
     def get_status(self) -> str:
         return self.__status
@@ -166,7 +168,7 @@ def parse_reports(file_path) -> list[Report]:
     except FileNotFoundError:
         print("The file with report data couldn't be found: ", file_path)
         exit(1)
-        
+
     lines = file.readlines()
     file.close()
 
@@ -190,7 +192,7 @@ def parse_reports(file_path) -> list[Report]:
             print("Invalid report data:", line)
 
     # sort based on visit date
-    reports.sort(key=lambda x: x.get_visit_date())
+    reports.sort(key=lambda x: x.get_visit_date(), reverse=True)
 
     return reports
 
